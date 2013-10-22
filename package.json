@@ -1,6 +1,13 @@
 {
   "name": "angular-easy-forms",
   "version": "0.1.0",
+  "description": "AngularEasyForms - Basic CRUD operation handling in a box",
+  "homepage": "http://github.com/hxu/angular-easy-forms",
+  "author": "Han Xu",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/hxu/angular-easy-forms.git"
+  },
   "dependencies": {
   },
   "devDependencies": {

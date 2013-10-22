@@ -15,9 +15,18 @@ module.exports = function (grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+    meta: {
+      banner: '/**\n' +
+      ' * <%= pkg.description %>\n' +
+      ' * @version v<%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd") %>\n' +
+      ' * @link <%= pkg.homepage %>\n' +
+      ' * @author <%= pkg.author %>\n' +
+      ' * @license MIT License, http://www.opensource.org/licenses/MIT\n' +
+      ' */\n'
+    },
     yeoman: {
       // configurable paths
-      app: require('./bower.json').appPath || 'src',
+      app: 'src',
       dist: 'dist'
     },
     watch: {
@@ -30,22 +39,28 @@ module.exports = function (grunt) {
           livereload: '<%= connect.options.livereload %>'
         },
         files: [
-          '<%= yeoman.app %>/{,*/}*.html',
           '.tmp/styles/{,*/}*.css',
           '{.tmp,<%= yeoman.app %>}/directives/{,*/}*.js',
           '{.tmp,<%= yeoman.app %>}/services/{,*/}*.js',
         ]
       }
     },
-    autoprefixer: {
-      options: ['last 1 version'],
+    concat: {
+      options: {
+        banner: '<%= meta.banner %>'
+      },
       dist: {
-        files: [{
-          expand: true,
-          cwd: '.tmp/styles/',
-          src: '{,*/}*.css',
-          dest: '.tmp/styles/'
-        }]
+        src: ['src/module.js', 'src/directives/*.js', 'src/services/*.js'],
+        dest: '<%= yeoman.dist %>/<%= pkg.name %>-<%= pkg.version %>.js'
+      }
+    },
+    uglify: {
+      options: {
+        banner: '<%= meta.banner %>'
+      },
+      dist: {
+        src: ['<%= concat.dist.dest %>'],
+        dest: '<%= yeoman.dist %>/<%= pkg.name %>-<%= pkg.version %>.min.js'
       }
     },
     connect: {
@@ -104,49 +119,10 @@ module.exports = function (grunt) {
         '<%= yeoman.app %>/*.js'
       ]
     },
-    // not used since Uglify task does concat,
-    // but still available if needed
-    /*concat: {
-      dist: {}
-    },*/
-    rev: {
-      dist: {
-        files: {
-          src: [
-            '<%= yeoman.dist %>/directives/{,*/}*.js',
-            '<%= yeoman.dist %>/services/{,*/}*.js',
-            '<%= yeoman.dist %>/*.js',
-            '<%= yeoman.dist %>/styles/{,*/}*.css',
-            '<%= yeoman.dist %>/styles/fonts/*'
-          ]
-        }
-      }
-    },
     useminPrepare: {
-      html: '<%= yeoman.app %>/index.html',
       options: {
         dest: '<%= yeoman.dist %>'
       }
-    },
-    usemin: {
-      html: ['<%= yeoman.dist %>/{,*/}*.html'],
-      css: ['<%= yeoman.dist %>/styles/{,*/}*.css'],
-      options: {
-        dirs: ['<%= yeoman.dist %>']
-      }
-    },
-    cssmin: {
-      // By default, your `index.html` <!-- Usemin Block --> will take care of
-      // minification. This option is pre-configured if you do not wish to use
-      // Usemin blocks.
-      // dist: {
-      //   files: {
-      //     '<%= yeoman.dist %>/styles/main.css': [
-      //       '.tmp/styles/{,*/}*.css',
-      //       '<%= yeoman.app %>/styles/{,*/}*.css'
-      //     ]
-      //   }
-      // }
     },
     htmlmin: {
       dist: {
@@ -164,51 +140,17 @@ module.exports = function (grunt) {
         files: [{
           expand: true,
           cwd: '<%= yeoman.app %>',
-          src: ['*.html', 'views/*.html'],
+          src: ['views/*.html'],
           dest: '<%= yeoman.dist %>'
         }]
       }
     },
-    // Put files not handled in other tasks here
-    copy: {
-      dist: {
-        files: [{
-          expand: true,
-          dot: true,
-          cwd: '<%= yeoman.app %>',
-          dest: '<%= yeoman.dist %>',
-          src: [
-            '*.{ico,png,txt}',
-            '.htaccess',
-            'bower_components/**/*',
-            'images/{,*/}*.{gif,webp}',
-            'styles/fonts/*'
-          ]
-        }, {
-          expand: true,
-          cwd: '.tmp/images',
-          dest: '<%= yeoman.dist %>/images',
-          src: [
-            'generated/*'
-          ]
-        }]
-      },
-      styles: {
-        expand: true,
-        cwd: '<%= yeoman.app %>/styles',
-        dest: '.tmp/styles/',
-        src: '{,*/}*.css'
-      }
-    },
     concurrent: {
       server: [
-        'copy:styles'
       ],
       test: [
-        'copy:styles'
       ],
       dist: [
-        'copy:styles',
         'htmlmin'
       ]
     },
@@ -226,15 +168,6 @@ module.exports = function (grunt) {
           src: '*.js',
           dest: '<%= yeoman.dist %>/scripts'
         }]
-      }
-    },
-    uglify: {
-      dist: {
-        files: {
-          '<%= yeoman.dist %>/scripts/scripts.js': [
-            '<%= yeoman.dist %>/scripts/scripts.js'
-          ]
-        }
       }
     },
     docular: {
@@ -276,25 +209,13 @@ module.exports = function (grunt) {
   });
 
   grunt.registerTask('test', [
-    'clean:server',
-    'concurrent:test',
-    'autoprefixer',
     'connect:test',
     'karma'
   ]);
 
   grunt.registerTask('build', [
-    'clean:dist',
-    'useminPrepare',
-    'concurrent:dist',
-    'autoprefixer',
     'concat',
-    'copy:dist',
-    'ngmin',
-    'cssmin',
     'uglify',
-    'rev',
-    'usemin'
   ]);
 
   grunt.registerTask('default', [
