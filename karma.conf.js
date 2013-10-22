@@ -13,8 +13,10 @@ module.exports = function(config) {
     files: [
       'src/bower_components/angular/angular.js',
       'src/bower_components/angular-mocks/angular-mocks.js',
+      'src/bower_components/angular-resource/angular-resource.js',
       'src/*.js',
       'src/directives/*.js',
+      'src/services/*.js',
       'test/mock/**/*.js',
       'test/spec/**/*.js'
     ],

@@ -23,7 +23,7 @@
     <!-- Add your site or application content here -->
     <div class="container" ng-controller="testCtrl">
 
-      <form name="testForm"ef-form ef-resource-url="/foo">
+      <form name="testForm"ef-form ef-resource="/foo">
         <input type="text"></input>
       </form>
 
@@ -40,13 +40,16 @@
 
     <!-- build:js({.tmp,app}) scripts/scripts.js -->
     <script src="module.js"></script>
+    <script src="services/efUtils.js"></script>
     <script src="directives/efForm.js"></script>
     <script src="directives/efInputText.js"></script>
     <!-- endbuild -->
 
     <script type="application/javascript">
       angular.module('easyForms').
-        controller('testCtrl', function($scope) {
+        controller('testCtrl', function($scope, $resource) {
+          $scope.res = $resource('/foo');
+          console.log($scope.res);
         });
     </script>
 

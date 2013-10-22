@@ -33,6 +33,7 @@ module.exports = function (grunt) {
           '<%= yeoman.app %>/{,*/}*.html',
           '.tmp/styles/{,*/}*.css',
           '{.tmp,<%= yeoman.app %>}/directives/{,*/}*.js',
+          '{.tmp,<%= yeoman.app %>}/services/{,*/}*.js',
         ]
       }
     },
@@ -99,6 +100,7 @@ module.exports = function (grunt) {
       all: [
         'Gruntfile.js',
         '<%= yeoman.app %>/directives/{,*/}*.js',
+        '<%= yeoman.app %>/services/{,*/}*.js',
         '<%= yeoman.app %>/*.js'
       ]
     },
@@ -112,6 +114,7 @@ module.exports = function (grunt) {
         files: {
           src: [
             '<%= yeoman.dist %>/directives/{,*/}*.js',
+            '<%= yeoman.dist %>/services/{,*/}*.js',
             '<%= yeoman.dist %>/*.js',
             '<%= yeoman.dist %>/styles/{,*/}*.css',
             '<%= yeoman.dist %>/styles/fonts/*'
@@ -245,6 +248,7 @@ module.exports = function (grunt) {
               title: 'Usage',
               scripts: [
                 "<%= yeoman.app %>/directives/",
+                "<%= yeoman.app %>/services/",
                 "<%= yeoman.app %>/module.js"
               ]
             }
