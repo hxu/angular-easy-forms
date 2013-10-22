@@ -14,9 +14,10 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-docular');
 
   grunt.initConfig({
+    pkg: grunt.file.readJSON('package.json'),
     yeoman: {
       // configurable paths
-      app: require('./bower.json').appPath || 'app',
+      app: require('./bower.json').appPath || 'src',
       dist: 'dist'
     },
     watch: {
@@ -50,12 +51,12 @@ module.exports = function (grunt) {
       options: {
         port: 9000,
         // Change this to '0.0.0.0' to access the server from outside.
-        hostname: 'localhost',
+        hostname: '0.0.0.0',
         livereload: 35729
       },
       livereload: {
         options: {
-          open: true,
+          open: false,
           base: [
             '.tmp',
             '<%= yeoman.app %>'
@@ -234,9 +235,24 @@ module.exports = function (grunt) {
       }
     },
     docular: {
-      groups: [],
-      showDocularDocs: true,
-      showAngularDocs: true
+      groups: [
+        {
+          groupTitle: 'angular-easy-forms',
+          groupId: 'angulargm-<%= pkg.version %>',
+          sections: [
+            {
+              id: 'usage',
+              title: 'Usage',
+              scripts: [
+                "<%= yeoman.app %>/directives/",
+                "<%= yeoman.app %>/module.js"
+              ]
+            }
+          ]
+        }
+      ],
+      showDocularDocs: false,
+      showAngularDocs: false
     }
 
   });
