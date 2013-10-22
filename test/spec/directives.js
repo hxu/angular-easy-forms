@@ -17,12 +17,8 @@ describe('efForm', function() {
     formScope = elem.scope();
   }));
 
-  describe('without existing model', function() {
-
-  });
-
-  describe('with existing resource object', function() {
-
+  it('should create an isolate scope', function() {
+    expect(formScope.foo).not.toBeDefined();
   });
 
   it('should convert a url to a resource', inject(function($rootScope, $compile, efUtils) {
@@ -36,6 +32,7 @@ describe('efForm', function() {
     expect(formScope.efResource).toBeDefined();
     expect(efUtils.isRestangularResource(formScope.efResource)).toBeTruthy();
     expect(formScope.efResource.route).toEqual('foo');
+    expect(formScope.isCollection).toBeTruthy();
   }));
 
   it('should accept a resource object', inject(function($rootScope, $compile, Restangular) {
@@ -49,11 +46,23 @@ describe('efForm', function() {
 
     expect(formScope.efResource).toBeDefined();
     expect(formScope.efResource.route).toEqual('foo');
+    expect(formScope.isCollection).toBeTruthy();
   }));
 
-  it('should create an isolate scope', function() {
-    expect(formScope.foo).not.toBeDefined();
-  });
+  it('should create a copy of Restangular elements', inject(function($rootScope, $compile, Restangular) {
+    elem = angular.element(
+      '<form name="testForm" ef-form ef-resource="testResource"></form>'
+    );
+    scope = $rootScope.$new();
+    scope.testResource = Restangular.one('foo');
+    $compile(elem)(scope);
+    formScope = elem.scope();
+
+    expect(formScope.efResource.route).toEqual('foo');
+    formScope.efResource.bar = 'bar';
+    expect(scope.testResource.bar).not.toBeDefined();
+    expect(formScope.isCollection).toBeFalsy();
+  }));
 
   it('should alias the form controller to form', function() {
     expect(formScope.form).toBeDefined();
