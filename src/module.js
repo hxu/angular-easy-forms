@@ -13,4 +13,4 @@
  *  - Basic styling with Bootstrap
  */
 
-angular.module('easyForms', ['ngResource']);
+angular.module('easyForms', ['restangular']);

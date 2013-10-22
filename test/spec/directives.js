@@ -9,7 +9,7 @@ describe('efForm', function() {
 
   beforeEach(inject(function($rootScope, $compile) {
     elem = angular.element(
-      '<form name="testForm" ef-form ef-resource="/foo"></form>'
+      '<form name="testForm" ef-form ef-resource="foo"></form>'
     );
     scope = $rootScope.$new();
     scope.foo = 'foo';
@@ -25,29 +25,30 @@ describe('efForm', function() {
 
   });
 
-  it('should convert a url to a resource', inject(function($rootScope, $compile) {
+  it('should convert a url to a resource', inject(function($rootScope, $compile, efUtils) {
     elem = angular.element(
-      '<form name="testForm" ef-form ef-resource="/foo"></form>'
+      '<form name="testForm" ef-form ef-resource="foo"></form>'
     );
     scope = $rootScope.$new();
     $compile(elem)(scope);
     formScope = elem.scope();
 
     expect(formScope.efResource).toBeDefined();
-    expect(formScope.efResource.save).toBeDefined();
+    expect(efUtils.isRestangularResource(formScope.efResource)).toBeTruthy();
+    expect(formScope.efResource.route).toEqual('foo');
   }));
 
-  it('should accept a resource object', inject(function($rootScope, $compile, $resource) {
+  it('should accept a resource object', inject(function($rootScope, $compile, Restangular) {
     elem = angular.element(
       '<form name="testForm" ef-form ef-resource="testResource"></form>'
     );
     scope = $rootScope.$new();
-    scope.testResource = $resource('/foo');
+    scope.testResource = Restangular.all('foo');
     $compile(elem)(scope);
     formScope = elem.scope();
 
     expect(formScope.efResource).toBeDefined();
-    expect(formScope.efResource.save).toBeDefined();
+    expect(formScope.efResource.route).toEqual('foo');
   }));
 
   it('should create an isolate scope', function() {

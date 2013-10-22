@@ -23,7 +23,7 @@
     <!-- Add your site or application content here -->
     <div class="container" ng-controller="testCtrl">
 
-      <form name="testForm"ef-form ef-resource="/foo">
+      <form name="testForm"ef-form ef-resource="rest">
         <input type="text"></input>
       </form>
 
@@ -32,6 +32,8 @@
 
     <script src="bower_components/jquery/jquery.js"></script>
     <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/lodash/lodash.js"></script>
+    <script src="bower_components/restangular/dist/restangular.js"></script>
 
     <!-- build:js scripts/modules.js -->
     <script src="bower_components/angular-resource/angular-resource.js"></script>
@@ -47,9 +49,10 @@
 
     <script type="application/javascript">
       angular.module('easyForms').
-        controller('testCtrl', function($scope, $resource) {
-          $scope.res = $resource('/foo');
-          console.log($scope.res);
+        controller('testCtrl', function($scope, Restangular) {
+          $scope.rest = Restangular.one('foo');
+          console.log($scope.rest);
+          console.log($scope);
         });
     </script>
 
