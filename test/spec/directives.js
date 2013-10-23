@@ -80,6 +80,7 @@ describe('efForm', function() {
   });
 
   describe('initialize in edit mode', function() {
+
     beforeEach(function() {
       elem = angular.element(
         '<form name="testForm" ef-form ef-resource="testResource"></form>'
@@ -110,6 +111,26 @@ describe('efForm', function() {
     it('should be in edit mode', function() {
       expect(formScope.editMode).toBeTruthy();
     });
+  });
+
+  describe('initializing with a config object', function () {
+
+    beforeEach(function() {
+      elem = angular.element(
+        '<form name="testForm" ef-form ef-resource="foo" ef-config="formConfig"></form>'
+      );
+      scope = $rootScope.$new();
+    });
+
+    it('should merge the efConfig object with the efConfig object in scope', function () {
+      scope.formConfig = {
+        submitSignal: 'fooSubmit'
+      };
+      $compile(elem)(scope);
+      formScope = elem.scope();
+      expect(formScope.efConfig.submitSignal).toEqual('fooSubmit');
+    });
+
   });
 
   describe('form actions', function () {

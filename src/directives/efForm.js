@@ -3,9 +3,7 @@
 angular.module('easyForms').
   directive('efForm', ['$parse', 'Restangular', 'efUtils', function($parse, Restangular, efUtils) {
     return {
-      scope: {
-        efResource: '@'
-      },
+      scope: {},
       require: '^form',
       link: function(scope, elem, attrs, controller) {
         // Variables holding the state of the form
@@ -24,10 +22,10 @@ angular.module('easyForms').
         scope.efResource = null; // Restangular resource
 
         // Config variables
-        scope.efConfig = {
-          triggerResetSignalName: 'efTriggerFormReset',
-          resetSignalName: 'efFormReset',
-          submitSignalName: 'efFormSubmit',
+        var defaultConfig = {
+          triggerResetSignal: 'efTriggerFormReset',
+          resetSignal: 'efFormReset',
+          submitSignal: 'efFormSubmit',
           successSignal: 'efFormSubmitSuccess',
           errorSignal: 'efFormSubmitError',
           successMessage: 'Form submission success',
@@ -38,6 +36,7 @@ angular.module('easyForms').
          * Form Initialization
          */
 
+        // Setting up the resource and model
         var parseResourceFromParent = function(res) {
           var parser = $parse(res);
           return parser(scope.$parent);
@@ -59,6 +58,14 @@ angular.module('easyForms').
           }
         }
 
+        // Merging in the configuration options
+        var parentConfig = $parse(attrs.efConfig)(scope.$parent);
+        if (parentConfig != undefined && _.isObject(parentConfig)) {
+          scope.efConfig = angular.extend(defaultConfig, parentConfig);
+        } else {
+          scope.efConfig = defaultConfig;
+        }
+
         /*
          * Form state tidying
          */
@@ -76,14 +83,14 @@ angular.module('easyForms').
 
         scope.reset = function() {
           if (efUtils.isRestangularResource(scope.efModel)) {
-            scope.efModel = Restangular.copy(scope.pristineModel);
+            scope.efModel = scope.efResource = Restangular.copy(scope.pristineModel);
           } else {
             scope.efModel = angular.copy(scope.pristineModel);
           }
           scope.form.$setPristine();
-          scope.$emit(scope.efConfig.resetSignalName);
+          scope.$emit(scope.efConfig.resetSignal);
         };
-        scope.$on(scope.efConfig.triggerResetSignalName, function() {scope.reset()});
+        scope.$on(scope.efConfig.triggerResetSignal, function() {scope.reset()});
 
         scope.submit = function() {
           var promise;
@@ -93,7 +100,7 @@ angular.module('easyForms').
           } else {
             promise = scope.efResource.post(scope.efModel);
           }
-          scope.$emit(scope.efConfig.submitSignalName);
+          scope.$emit(scope.efConfig.submitSignal);
           scope.responseHandler(promise);
         };
 
