@@ -226,6 +226,13 @@ describe('efForm', function() {
         expect(formScope.hasErrors()).toBeTruthy();
       });
 
+      it('submit with error should emit efSubmitError signal', function () {
+        $httpBackend.expect('POST', '/foo', {}).respond(400);
+        spyOn(formScope, '$emit');
+        formScope.submit();
+        $httpBackend.flush();
+        expect(formScope.$emit).toHaveBeenCalledWith('efFormSubmitError');
+      });
     });
   });
 });

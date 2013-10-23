@@ -24,13 +24,15 @@ angular.module('easyForms').
         scope.efResource = null; // Restangular resource
 
         // Config variables
-        var triggerResetSignalName = 'efTriggerFormReset';
-        var resetSignalName = 'efFormReset';
-        var submitSignalName = 'efFormSubmit';
-        var successSignal = 'efFormSubmitSuccess';
-        var errorSignal = 'efFormSubmitError';
-        var successMessage = 'Form submission success';
-        var errorMessage = 'Form submission error';
+        scope.efConfig = {
+          triggerResetSignalName: 'efTriggerFormReset',
+          resetSignalName: 'efFormReset',
+          submitSignalName: 'efFormSubmit',
+          successSignal: 'efFormSubmitSuccess',
+          errorSignal: 'efFormSubmitError',
+          successMessage: 'Form submission success',
+          errorMessage: 'Form submission error',
+        };
 
         /*
          * Form Initialization
@@ -79,9 +81,9 @@ angular.module('easyForms').
             scope.efModel = angular.copy(scope.pristineModel);
           }
           scope.form.$setPristine();
-          scope.$emit(resetSignalName);
+          scope.$emit(scope.efConfig.resetSignalName);
         };
-        scope.$on(triggerResetSignalName, function() {scope.reset()});
+        scope.$on(scope.efConfig.triggerResetSignalName, function() {scope.reset()});
 
         scope.submit = function() {
           var promise;
@@ -91,18 +93,19 @@ angular.module('easyForms').
           } else {
             promise = scope.efResource.post(scope.efModel);
           }
-          scope.$emit(submitSignalName);
+          scope.$emit(scope.efConfig.submitSignalName);
           scope.responseHandler(promise);
         };
 
         scope.successHandler = function() {
-          scope.messages.push(successMessage);
-          scope.$emit(successSignal);
+          scope.messages.push(scope.efConfig.successMessage);
+          scope.$emit(scope.efConfig.successSignal);
         };
 
         scope.errorHandler = function(resp) {
-          scope.messages.push(errorMessage);
+          scope.messages.push(scope.efConfig.errorMessage);
           angular.extend(scope.errors, resp.data);
+          scope.$emit(scope.efConfig.errorSignal);
         };
 
         scope.responseHandler = function(promise) {
