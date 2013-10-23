@@ -12,6 +12,10 @@ angular.module('easyForms').
         scope.editMode = false;
         scope.isCollection = true;
 
+        scope.hasErrors = function() {
+          return !_.isEmpty(scope.errors);
+        };
+
         scope.form = scope[attrs['name']];
         scope.errors = {};
         scope.messages = []; // Something like "Submission successful"
@@ -20,8 +24,13 @@ angular.module('easyForms').
         scope.efResource = null; // Restangular resource
 
         // Config variables
+        var triggerResetSignalName = 'efTriggerFormReset';
         var resetSignalName = 'efFormReset';
         var submitSignalName = 'efFormSubmit';
+        var successSignal = 'efFormSubmitSuccess';
+        var errorSignal = 'efFormSubmitError';
+        var successMessage = 'Form submission success';
+        var errorMessage = 'Form submission error';
 
         /*
          * Form Initialization
@@ -49,6 +58,17 @@ angular.module('easyForms').
         }
 
         /*
+         * Form state tidying
+         */
+
+        var clearMessages = function() {
+          scope.messages.length = 0;
+        };
+
+        var clearErrors = function() {
+        };
+
+        /*
          * Form Actions
          */
 
@@ -60,6 +80,33 @@ angular.module('easyForms').
           }
           scope.form.$setPristine();
           scope.$emit(resetSignalName);
+        };
+        scope.$on(triggerResetSignalName, function() {scope.reset()});
+
+        scope.submit = function() {
+          var promise;
+
+          if (scope.editMode) {
+            promise = scope.efResource.put();
+          } else {
+            promise = scope.efResource.post(scope.efModel);
+          }
+          scope.$emit(submitSignalName);
+          scope.responseHandler(promise);
+        };
+
+        scope.successHandler = function() {
+          scope.messages.push(successMessage);
+          scope.$emit(successSignal);
+        };
+
+        scope.errorHandler = function(resp) {
+          scope.messages.push(errorMessage);
+          angular.extend(scope.errors, resp.data);
+        };
+
+        scope.responseHandler = function(promise) {
+          promise.then(scope.successHandler, scope.errorHandler);
         };
       }
     };

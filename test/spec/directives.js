@@ -143,5 +143,89 @@ describe('efForm', function() {
       expect(formScope.$emit).toHaveBeenCalledWith('efFormReset');
     });
 
+    it('reset can be triggered by a signal', function () {
+      spyOn(formScope, 'reset');
+      scope.$broadcast('efTriggerFormReset');
+      expect(formScope.reset).toHaveBeenCalled();
+    });
+
+    it('submit should emit efSubmit signal', function () {
+      spyOn(formScope, '$emit');
+      formScope.submit();
+      expect(formScope.$emit).toHaveBeenCalledWith('efFormSubmit');
+    });
+
+    it('submit on a collection or new object should POST to the resource', function () {
+      spyOn(formScope.efResource, 'post');
+      spyOn(formScope, 'responseHandler'); // Stub out the response handler
+      formScope.submit();
+      expect(formScope.efResource.post).toHaveBeenCalledWith(formScope.efModel);
+    });
+
+    it('submit on an element should PUT to the resource', function () {
+      elem = angular.element(
+        '<form name="testForm" ef-form ef-resource="testResource">' +
+          '<input type="text" name="testInput" ng-model="efModel.test"></input>' +
+        '</form>'
+      );
+      scope = $rootScope.$new();
+      scope.testResource = Restangular.one('foo');
+      $compile(elem)(scope);
+      formScope = elem.scope();
+      inputField = formScope.form.testInput;
+
+      spyOn(formScope.efResource, 'put');
+      spyOn(formScope, 'responseHandler'); // Stub out the response handler
+      formScope.submit();
+      expect(formScope.efResource.put).toHaveBeenCalled();
+    });
+
+    describe('response handling', function () {
+      var $httpBackend;
+      beforeEach(inject(function (_$httpBackend_) {
+        $httpBackend = _$httpBackend_;
+      }));
+
+      it('should pass the response to responseHandler', function () {
+        spyOn(formScope, 'responseHandler');
+        formScope.submit();
+        expect(formScope.responseHandler).toHaveBeenCalled();
+      });
+
+      it('submit without error should call the successHandler', function () {
+        $httpBackend.expect('POST', '/foo', {test: 'bar'}).respond(201);
+        spyOn(formScope, 'successHandler');
+        inputField.$setViewValue('bar');
+        formScope.submit();
+        $httpBackend.flush();
+        expect(formScope.successHandler).toHaveBeenCalled();
+      });
+
+      it('submit without error should emit efSubmitSuccess signal', function () {
+        $httpBackend.expect('POST', '/foo', {}).respond(201);
+        spyOn(formScope, '$emit');
+        formScope.submit();
+        $httpBackend.flush();
+        expect(formScope.$emit).toHaveBeenCalledWith('efFormSubmitSuccess');
+      });
+
+      it('submit with error should call the errorHandler', function () {
+        var errorResp = {error: 'error!'};
+        $httpBackend.expect('POST', '/foo', {}).respond(400, errorResp);
+        spyOn(formScope, 'errorHandler');
+        formScope.submit();
+        $httpBackend.flush();
+        expect(formScope.errorHandler).toHaveBeenCalled();
+      });
+
+      it('submit with error should set form to error state', function () {
+        expect(formScope.hasErrors()).toBeFalsy();
+        $httpBackend.expect('POST', '/foo', {}).respond(400, {error: 'error!'});
+        formScope.submit();
+        $httpBackend.flush();
+        expect(formScope.hasErrors()).toBeTruthy();
+      });
+
+    });
   });
 });
