@@ -12,12 +12,20 @@ angular.module('easyForms').
         scope.editMode = false;
         scope.isCollection = true;
 
-        // Resolve the resource attribute
-        // 1) If it can't be found on the parent resource, create a new Restangular Collection object
-        // 2) If it can be found, but is not a Restangular object, create a new Restangular Collection object
-        // 3) If it can be found and is a Restangular object, and:
-        //    a) it is a Collection -> use POST
-        //    b) it is an Element -> use PUT
+        scope.form = scope[attrs['name']];
+        scope.errors = {};
+        scope.messages = []; // Something like "Submission successful"
+        scope.efModel = {}; // Data model for the form
+        scope.pristineModel = {};
+        scope.efResource = null; // Restangular resource
+
+        // Config variables
+        var resetSignalName = 'efFormReset';
+        var submitSignalName = 'efFormSubmit';
+
+        /*
+         * Form Initialization
+         */
 
         var parseResourceFromParent = function(res) {
           var parser = $parse(res);
@@ -26,21 +34,33 @@ angular.module('easyForms').
         var parentResource = parseResourceFromParent(attrs.efResource);
 
         if (parentResource == undefined || !efUtils.isRestangularResource(parentResource)) {
-          scope.efResource = Restangular.all(scope.efResource);
-          scope.efModel = {};
+          scope.efResource = Restangular.all(attrs.efResource);
         } else {
           if (efUtils.isRestangularCollection(parentResource)) {
             scope.efResource = parentResource;
-            scope.efModel = {};
           } else {
+            // Will a PUT be made on the efResource or the efModel object?
             scope.efResource = Restangular.copy(parentResource);
             scope.efModel = scope.efResource;
+            scope.pristineModel = Restangular.copy(scope.efResource); // Need a separate copy to store pristine state
             scope.isCollection = false;
             scope.editMode = true;
           }
         }
 
-        scope.form = scope[attrs['name']];
+        /*
+         * Form Actions
+         */
+
+        scope.reset = function() {
+          if (efUtils.isRestangularResource(scope.efModel)) {
+            scope.efModel = Restangular.copy(scope.pristineModel);
+          } else {
+            scope.efModel = angular.copy(scope.pristineModel);
+          }
+          scope.form.$setPristine();
+          scope.$emit(resetSignalName);
+        };
       }
     };
   }]);

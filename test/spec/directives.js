@@ -1,6 +1,6 @@
 'use strict';
 
-describe('efForm initialization', function() {
+describe('efForm', function() {
   var elem, scope, formScope
   var $compile, $rootScope, efUtils, Restangular;
 
@@ -38,7 +38,7 @@ describe('efForm initialization', function() {
     expect(formScope.form.$valid).toBeTruthy();
   });
 
-  describe('in create mode', function() {
+  describe('initialize in create mode', function() {
     beforeEach(function() {
       elem = angular.element(
         '<form name="testForm" ef-form ef-resource="foo"></form>'
@@ -79,7 +79,7 @@ describe('efForm initialization', function() {
     });
   });
 
-  describe('in edit mode', function() {
+  describe('initialize in edit mode', function() {
     beforeEach(function() {
       elem = angular.element(
         '<form name="testForm" ef-form ef-resource="testResource"></form>'
@@ -90,21 +90,58 @@ describe('efForm initialization', function() {
       formScope = elem.scope();
     });
 
+    it('should set the resource as the form model', function() {
+      expect(formScope.efModel).toEqual(formScope.efResource);
+    });
+
     it('should create a copy of the resource if passed a RestangularElement', function() {
-      expect(formScope.efResource.route).toEqual('foo');
-      formScope.efResource.bar = 'bar';
+      expect(formScope.efModel.route).toEqual('foo');
+      formScope.efModel.bar = 'bar';
       expect(scope.testResource.bar).not.toBeDefined();
       expect(formScope.isCollection).toBeFalsy();
+    });
+
+    it('should create a separate copy for pristine state', function () {
+      expect(formScope.pristineModel.route).toEqual('foo');
+      formScope.efModel.bar = 'bar';
+      expect(formScope.pristineModel).toBeDefined();
     });
 
     it('should be in edit mode', function() {
       expect(formScope.editMode).toBeTruthy();
     });
-
-    it('should set the resource as the form model', function() {
-      expect(formScope.efModel).toEqual(formScope.efResource);
-    });
   });
 
+  describe('form actions', function () {
+    var inputField;
 
+    beforeEach(function() {
+      elem = angular.element(
+        '<form name="testForm" ef-form ef-resource="foo">' +
+          '<input type="text" name="testInput" ng-model="efModel.test"></input>' +
+        '</form>'
+      );
+      scope = $rootScope.$new();
+      $compile(elem)(scope);
+      formScope = elem.scope();
+      inputField = formScope.form.testInput;
+    });
+
+    it('reset should set the form back to pristine', function () {
+      inputField.$setViewValue('bar');
+      expect(formScope.form.$pristine).toBeFalsy();
+      expect(formScope.efModel.test).toEqual('bar');
+      formScope.reset();
+      expect(scope.efModel).toEqual(scope.pristineModel);
+      expect(formScope.efModel.test).not.toBeDefined();
+      expect(formScope.form.$pristine).toBeTruthy();
+    });
+
+    it('reset should emit a signal', function () {
+      spyOn(formScope, '$emit');
+      formScope.reset();
+      expect(formScope.$emit).toHaveBeenCalledWith('efFormReset');
+    });
+
+  });
 });
