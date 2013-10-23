@@ -8,6 +8,10 @@ angular.module('easyForms').
       },
       require: '^form',
       link: function(scope, elem, attrs, controller) {
+        // Variables holding the state of the form
+        scope.editMode = false;
+        scope.isCollection = true;
+
         // Resolve the resource attribute
         // 1) If it can't be found on the parent resource, create a new Restangular Collection object
         // 2) If it can be found, but is not a Restangular object, create a new Restangular Collection object
@@ -23,19 +27,20 @@ angular.module('easyForms').
 
         if (parentResource == undefined || !efUtils.isRestangularResource(parentResource)) {
           scope.efResource = Restangular.all(scope.efResource);
-          scope.isCollection = true;
+          scope.efModel = {};
         } else {
           if (efUtils.isRestangularCollection(parentResource)) {
             scope.efResource = parentResource;
-            scope.isCollection = true;
+            scope.efModel = {};
           } else {
             scope.efResource = Restangular.copy(parentResource);
+            scope.efModel = scope.efResource;
             scope.isCollection = false;
+            scope.editMode = true;
           }
         }
 
         scope.form = scope[attrs['name']];
-        scope.efModel = {};
       }
     };
   }]);
