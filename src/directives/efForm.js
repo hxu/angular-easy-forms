@@ -24,6 +24,7 @@ angular.module('easyForms').
         // Config variables
         var defaultConfig = {
           triggerResetSignal: 'efTriggerFormReset',
+          triggerReinitializeSignal: 'efReinitialize',
           resetSignal: 'efFormReset',
           submitSignal: 'efFormSubmit',
           successSignal: 'efFormSubmitSuccess',
@@ -37,34 +38,39 @@ angular.module('easyForms').
          */
 
         // Setting up the resource and model
-        var parseResourceFromParent = function(res) {
-          var parser = $parse(res);
-          return parser(scope.$parent);
-        };
-        var parentResource = parseResourceFromParent(attrs.efResource);
 
-        if (parentResource == undefined || !efUtils.isRestangularResource(parentResource)) {
-          scope.efResource = Restangular.all(attrs.efResource);
-        } else {
-          if (efUtils.isRestangularCollection(parentResource)) {
-            scope.efResource = parentResource;
+        var initialize = function() {
+          var parseResourceFromParent = function(res) {
+            var parser = $parse(res);
+            return parser(scope.$parent);
+          };
+          var parentResource = parseResourceFromParent(attrs.efResource);
+
+          if (parentResource == undefined || !efUtils.isRestangularResource(parentResource)) {
+            scope.efResource = Restangular.all(attrs.efResource);
           } else {
-            // Will a PUT be made on the efResource or the efModel object?
-            scope.efResource = Restangular.copy(parentResource);
-            scope.efModel = scope.efResource;
-            scope.pristineModel = Restangular.copy(scope.efResource); // Need a separate copy to store pristine state
-            scope.isCollection = false;
-            scope.editMode = true;
+            if (efUtils.isRestangularCollection(parentResource)) {
+              scope.efResource = parentResource;
+            } else {
+              // Will a PUT be made on the efResource or the efModel object?
+              scope.efResource = Restangular.copy(parentResource);
+              scope.efModel = scope.efResource;
+              scope.pristineModel = Restangular.copy(scope.efResource); // Need a separate copy to store pristine state
+              scope.isCollection = false;
+              scope.editMode = true;
+            }
           }
-        }
 
-        // Merging in the configuration options
-        var parentConfig = $parse(attrs.efConfig)(scope.$parent);
-        if (parentConfig != undefined && _.isObject(parentConfig)) {
-          scope.efConfig = angular.extend(defaultConfig, parentConfig);
-        } else {
-          scope.efConfig = defaultConfig;
-        }
+          // Merging in the configuration options
+          var parentConfig = $parse(attrs.efConfig)(scope.$parent);
+          if (parentConfig != undefined && _.isObject(parentConfig)) {
+            scope.efConfig = angular.extend(defaultConfig, parentConfig);
+          } else {
+            scope.efConfig = defaultConfig;
+          }
+        };
+
+        initialize();
 
         /*
          * Form state tidying

@@ -70,6 +70,16 @@ describe('efForm', function() {
       expect(formScope.isCollection).toBeTruthy();
     });
 
+    it('should re-initialize when it receives a signal and attach to new resources', function () {
+      // This doesn't work as expected
+      // If you attach the initialize() function as a listener, it doesn't work because the attrs value is
+      // frozen in the closure when initialize() is defined.  So it doens't see that the element's attrs has changed when the signal is sent
+      expect(formScope.efResource.route).toEqual('foo');
+      elem.attr('efResource', 'bar');
+      scope.$broadcast('efReinitialize');
+      expect(formScope.efResource.route).toEqual('bar');
+    });
+
     it('should create a new object as the form model', function() {
       expect(formScope.efModel).toBeDefined();
     });
