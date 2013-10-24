@@ -50,9 +50,9 @@ describe('efForm', function() {
     });
 
     it('should convert a url to a resource', function() {
-      expect(formScope.efResource).toBeDefined();
-      expect(efUtils.isRestangularResource(formScope.efResource)).toBeTruthy();
-      expect(formScope.efResource.route).toEqual('foo');
+      expect(formScope.resourceObj).toBeDefined();
+      expect(efUtils.isRestangularResource(formScope.resourceObj)).toBeTruthy();
+      expect(formScope.resourceObj.route).toEqual('foo');
       expect(formScope.isCollection).toBeTruthy();
     });
 
@@ -65,19 +65,24 @@ describe('efForm', function() {
       $compile(elem)(scope);
       formScope = elem.scope();
 
-      expect(formScope.efResource).toBeDefined();
-      expect(formScope.efResource.route).toEqual('foo');
+      expect(formScope.resourceObj).toBeDefined();
+      expect(formScope.resourceObj.route).toEqual('foo');
       expect(formScope.isCollection).toBeTruthy();
     });
 
-    it('should re-initialize when it receives a signal and attach to new resources', function () {
-      // This doesn't work as expected
-      // If you attach the initialize() function as a listener, it doesn't work because the attrs value is
-      // frozen in the closure when initialize() is defined.  So it doens't see that the element's attrs has changed when the signal is sent
-      expect(formScope.efResource.route).toEqual('foo');
-      elem.attr('efResource', 'bar');
-      scope.$broadcast('efReinitialize');
-      expect(formScope.efResource.route).toEqual('bar');
+    it('should update the resourceObj when the efResource changes', function () {
+      elem = angular.element(
+        '<form name="testForm" ef-form ef-resource="testResource"></form>'
+      );
+      scope = $rootScope.$new();
+      scope.testResource = Restangular.all('foo');
+      $compile(elem)(scope);
+      formScope = elem.scope();
+      expect(formScope.resourceObj.route).toEqual('foo');
+
+      scope.testResource = Restangular.all('bar');
+      scope.$apply();
+      expect(formScope.resourceObj.route).toEqual('bar');
     });
 
     it('should create a new object as the form model', function() {
@@ -102,7 +107,7 @@ describe('efForm', function() {
     });
 
     it('should set the resource as the form model', function() {
-      expect(formScope.efModel).toEqual(formScope.efResource);
+      expect(formScope.efModel).toEqual(formScope.resourceObj);
     });
 
     it('should create a copy of the resource if passed a RestangularElement', function() {
@@ -180,6 +185,27 @@ describe('efForm', function() {
       expect(formScope.reset).toHaveBeenCalled();
     });
 
+    it('reset should keep the resourceObj and efModel objects in sync', function () {
+      elem = angular.element(
+        '<form name="testForm" ef-form ef-resource="testResource">' +
+          '<input type="text" name="testInput" ng-model="efModel.test"></input>' +
+        '</form>'
+      );
+      scope = $rootScope.$new();
+      scope.testResource = Restangular.one('foo');
+      $compile(elem)(scope);
+      formScope = elem.scope();
+      inputField = formScope.form.testInput;
+      expect(formScope.efModel).toEqual(formScope.resourceObj);
+
+      inputField.$setViewValue('foo');
+      expect(formScope.efModel.test).toEqual(formScope.resourceObj.test);
+
+      formScope.reset();
+      expect(formScope.efModel.test).not.toBeDefined();
+      expect(formScope.resourceObj.test).not.toBeDefined();
+    });
+
     it('submit should emit efSubmit signal', function () {
       spyOn(formScope, '$emit');
       formScope.submit();
@@ -187,10 +213,10 @@ describe('efForm', function() {
     });
 
     it('submit on a collection or new object should POST to the resource', function () {
-      spyOn(formScope.efResource, 'post');
+      spyOn(formScope.resourceObj, 'post');
       spyOn(formScope, 'responseHandler'); // Stub out the response handler
       formScope.submit();
-      expect(formScope.efResource.post).toHaveBeenCalledWith(formScope.efModel);
+      expect(formScope.resourceObj.post).toHaveBeenCalledWith(formScope.efModel);
     });
 
     it('submit on an element should PUT to the resource', function () {
@@ -205,10 +231,10 @@ describe('efForm', function() {
       formScope = elem.scope();
       inputField = formScope.form.testInput;
 
-      spyOn(formScope.efResource, 'put');
+      spyOn(formScope.resourceObj, 'put');
       spyOn(formScope, 'responseHandler'); // Stub out the response handler
       formScope.submit();
-      expect(formScope.efResource.put).toHaveBeenCalled();
+      expect(formScope.resourceObj.put).toHaveBeenCalled();
     });
 
     describe('response handling', function () {

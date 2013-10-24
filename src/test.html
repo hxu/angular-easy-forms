@@ -23,10 +23,12 @@
     <!-- Add your site or application content here -->
     <div class="container" ng-controller="testCtrl">
 
-      <form name="testForm"ef-form ef-resource="rest">
+      <form name="testForm"ef-form ef-resource="{{ test }}">
         <input type="text"></input>
+        route: {{ efResource.route }}
       </form>
 
+      <div test-dir test-attr="test">blaraargh</div>
 
     </div>
 
@@ -49,10 +51,34 @@
 
     <script type="application/javascript">
       angular.module('easyForms').
-        controller('testCtrl', function($scope, Restangular) {
-          $scope.rest = Restangular.one('foo');
-          console.log($scope.rest);
-          console.log($scope);
+        controller('testCtrl', function($scope, Restangular, $timeout) {
+          $scope.test = 'foo';
+          var elem = angular.element('form');
+
+          $timeout(function() {
+            console.log('changing element');
+            $scope.test = 'bar'
+          }, 1000);
+
+          $timeout(function() {
+            console.log('changing to null');
+            delete $scope.test;
+          }, 1500)
+        });
+
+      angular.module('easyForms').
+        directive('testDir', function() {
+          return {
+            scope: {
+              testAttr: '=' // evaluates to null if it doesn't resolve to anything on the scope
+            },
+            link: function(scope, elem, attrs, ctrl) {
+              scope.$watch('testAttr', function(newVal) {
+                console.log('bound value changed to ' + newVal);
+                console.log('attribute is ' + attrs.testAttr);
+              });
+            }
+          }
         });
     </script>
 

@@ -3,7 +3,9 @@
 angular.module('easyForms').
   directive('efForm', ['$parse', 'Restangular', 'efUtils', function($parse, Restangular, efUtils) {
     return {
-      scope: {},
+      scope: {
+        efResource: '='
+      },
       require: '^form',
       link: function(scope, elem, attrs, controller) {
         // Variables holding the state of the form
@@ -19,7 +21,6 @@ angular.module('easyForms').
         scope.messages = []; // Something like "Submission successful"
         scope.efModel = {}; // Data model for the form
         scope.pristineModel = {};
-        scope.efResource = null; // Restangular resource
 
         // Config variables
         var defaultConfig = {
@@ -39,23 +40,30 @@ angular.module('easyForms').
 
         // Setting up the resource and model
 
-        var initialize = function() {
-          var parseResourceFromParent = function(res) {
-            var parser = $parse(res);
-            return parser(scope.$parent);
-          };
-          var parentResource = parseResourceFromParent(attrs.efResource);
+        /*
+         * @doc function
+         * @name easyForms.efForm:$initialize
+         *
+         * @description Initializes the form by:
+         *  - resolving the resource attribute to a resource object
+         *  - if a configuration object is provided, merging it into the form's configuration
+         *
+         * @param {Restangular resource} The resource to bind the form to.  If this is null, the form will create a new
+         * Restangular object with the string value of the efResource attribute on the directive
+         *
+         */
 
-          if (parentResource == undefined || !efUtils.isRestangularResource(parentResource)) {
-            scope.efResource = Restangular.all(attrs.efResource);
+        scope.$initialize = function(resource) {
+          if (resource == undefined || !efUtils.isRestangularResource(resource)) {
+            scope.resourceObj = Restangular.all(attrs.efResource);
           } else {
-            if (efUtils.isRestangularCollection(parentResource)) {
-              scope.efResource = parentResource;
+            if (efUtils.isRestangularCollection(resource)) {
+              scope.resourceObj = resource;
             } else {
               // Will a PUT be made on the efResource or the efModel object?
-              scope.efResource = Restangular.copy(parentResource);
-              scope.efModel = scope.efResource;
-              scope.pristineModel = Restangular.copy(scope.efResource); // Need a separate copy to store pristine state
+              scope.resourceObj = Restangular.copy(resource);
+              scope.efModel = scope.resourceObj;
+              scope.pristineModel = Restangular.copy(scope.resourceObj); // Need a separate copy to store pristine state
               scope.isCollection = false;
               scope.editMode = true;
             }
@@ -68,9 +76,13 @@ angular.module('easyForms').
           } else {
             scope.efConfig = defaultConfig;
           }
+
         };
 
-        initialize();
+        scope.$initialize(scope.efResource);
+        scope.$watch('efResource', function(newVal) {
+          scope.$initialize(newVal);
+        });
 
         /*
          * Form state tidying
@@ -89,7 +101,7 @@ angular.module('easyForms').
 
         scope.reset = function() {
           if (efUtils.isRestangularResource(scope.efModel)) {
-            scope.efModel = scope.efResource = Restangular.copy(scope.pristineModel);
+            scope.efModel = scope.resourceObj = Restangular.copy(scope.pristineModel);
           } else {
             scope.efModel = angular.copy(scope.pristineModel);
           }
@@ -102,9 +114,9 @@ angular.module('easyForms').
           var promise;
 
           if (scope.editMode) {
-            promise = scope.efResource.put();
+            promise = scope.resourceObj.put();
           } else {
-            promise = scope.efResource.post(scope.efModel);
+            promise = scope.resourceObj.post(scope.efModel);
           }
           scope.$emit(scope.efConfig.submitSignal);
           scope.responseHandler(promise);
