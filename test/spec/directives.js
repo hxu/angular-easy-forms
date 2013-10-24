@@ -163,6 +163,12 @@ describe('efForm', function() {
       inputField = formScope.form.testInput;
     });
 
+    it('$clearErrors should clear the errors hash', function () {
+      formScope.errors = {foo: 'bar'};
+      formScope.$clearErrors();
+      expect(formScope.errors).toEqual({});
+    });
+
     it('reset should set the form back to pristine', function () {
       inputField.$setViewValue('bar');
       expect(formScope.form.$pristine).toBeFalsy();
@@ -210,6 +216,12 @@ describe('efForm', function() {
       spyOn(formScope, '$emit');
       formScope.submit();
       expect(formScope.$emit).toHaveBeenCalledWith('efFormSubmit');
+    });
+
+    it('submit should call $clearErrors', function () {
+      spyOn(formScope, '$clearErrors');
+      formScope.submit();
+      expect(formScope.$clearErrors).toHaveBeenCalled();
     });
 
     it('submit on a collection or new object should POST to the resource', function () {
@@ -281,6 +293,13 @@ describe('efForm', function() {
         formScope.submit();
         $httpBackend.flush();
         expect(formScope.hasErrors()).toBeTruthy();
+      });
+
+      it('submit with error should populate the error hash', function () {
+        $httpBackend.expect('POST', '/foo', {}).respond(400, {test: 'must be filled out'});
+        formScope.submit();
+        $httpBackend.flush();
+        expect(formScope.errors.test).toEqual(['must be filled out']);
       });
 
       it('submit with error should emit efSubmitError signal', function () {

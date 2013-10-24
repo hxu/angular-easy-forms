@@ -88,11 +88,12 @@ angular.module('easyForms').
          * Form state tidying
          */
 
-        var clearMessages = function() {
+        scope.$clearMessages = function() {
           scope.messages.length = 0;
         };
 
-        var clearErrors = function() {
+        scope.$clearErrors = function() {
+          scope.errors = {};
         };
 
         /*
@@ -113,6 +114,8 @@ angular.module('easyForms').
         scope.submit = function() {
           var promise;
 
+          scope.$clearErrors();
+
           if (scope.editMode) {
             promise = scope.resourceObj.put();
           } else {
@@ -129,7 +132,13 @@ angular.module('easyForms').
 
         scope.errorHandler = function(resp) {
           scope.messages.push(scope.efConfig.errorMessage);
-          angular.extend(scope.errors, resp.data);
+          angular.forEach(resp.data, function(errormsg, field) {
+            if (angular.isArray(errormsg)) {
+              scope.errors[field] = errormsg;
+            } else {
+              scope.errors[field] = [errormsg];
+            }
+          });
           scope.$emit(scope.efConfig.errorSignal);
         };
 
