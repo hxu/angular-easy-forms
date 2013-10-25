@@ -29,6 +29,12 @@
         <input type="text" name="testField" ng-model="efModel.testField"></input>
         route: {{ efResource.route }}
 
+        <input type="text" name="testField2" test-input></input>
+
+        <pre>
+          {{ efModel }}
+        </pre>
+
         <div ef-submit></div>
         <div ef-reset></div>
       </form>
@@ -64,15 +70,24 @@
         });
 
       angular.module('easyForms').
+        directive('testInput', function() {
+          return {
+            link: function(scope, elem, attrs) {
+              var modelName = 'efModel.' + attrs.name;
+              attrs.$set('ngModel', modelName);
+              scope.$apply();
+            }
+          };
+        });
+
+      angular.module('easyForms').
         directive('testDir', function() {
           return {
             scope: {
-              testAttr: '=' // evaluates to null if it doesn't resolve to anything on the scope
             },
             link: function(scope, elem, attrs, ctrl) {
-              scope.$watch('testAttr', function(newVal) {
-                console.log('bound value changed to ' + newVal);
-                console.log('attribute is ' + attrs.testAttr);
+              scope.$watch(function(scope) {return scope.$eval(attrs.testAttr)}, function(newVal) {
+                console.log(newVal);
               });
             }
           }
