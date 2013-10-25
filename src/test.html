@@ -29,7 +29,7 @@
         <input type="text" name="testField" ng-model="model.testField"></input>
         route: {{ efResource.route }}
 
-        <input type="text" name="testField2" test-input></input>
+        <input type="text" name="testField2" ef-input ef-label="MyLabel" class="bar"></input>
 
         <pre>
           {{ model }}
@@ -74,14 +74,39 @@
       angular.module('easyForms').
         directive('testInput', function() {
           return {
-            priority: 100,
-            compile: function(elem, attrs) {
-              var modelName = 'model.' + attrs.name;
-//              attrs.$set('ngModel', modelName);
-              // Still not being registered -- meaning that the ngModel directive is not being compiled
-              var elemStr = '<input type="text" ng-model="' + modelName +'"></input>';
-              elem.replaceWith(elemStr);
+//            compile: function(elem, attrs) {
+//              var modelName = 'model.' + attrs.name;
+//              var elemStr = '<input type="text" ng-model="' + modelName +'"></input>';
+//              elem.replaceWith(elemStr);
+//              };
+            replace: true,
+//            template: '<input ng-model="model.foo">'
+            template: function(elem, attrs) {
+              var newElem = '<input ng-model="model.' + attrs.name + '">';
+//              angular.forEach(attrs.$attr, function(tagName, attrKey) {
+//                var attrVal = attrs[attrKey];
+//                if (attrKey == 'testInput') {
+//                  return;
+//                }
+//                if (attrVal == "") {
+//                  newElem += ' ' + tagName;
+//                } else {
+//                  newElem += ' ' + tagName + '=' + attrs[attrKey];
+//                }
+//              });
+//              newElem += '>';
+              return newElem;
             }
+//            priority: 100,
+//            template: function(elem, attrs) {
+//              var elemStr = '<input>';
+//              console.log(elem.html());
+//              console.log(attrs);
+//              attrs.$set('ngModel', 'model.' + attrs.name);
+//              elemStr += elem.html() + '</div>';
+//              return elemStr;
+//            }
+
           };
         });
 

@@ -8,14 +8,20 @@ angular.module('easyForms').
    *
    * @description use as an attribute on an input tag.
    */
-  directive('efInputText', function() {
+  directive('efInput', function() {
     return {
-      restrict: 'A',
-      priority: 100,
-      link: function(scope, elem, attrs) {
-        // Change the ngModel attribute to be model.{name}
-        console.log(attrs);
-        console.log(attrs);
+      replace: true,
+      template: function(elem, attrs) {
+        var newElem =
+          '<div class="form-group">' +
+            '<label for="' + attrs.id + '">' + attrs.efLabel + '</label>' +
+            '<input ng-model="model.' + attrs.name + '" class="form-control">' +
+          '</div>';
+        return newElem;
+      },
+      compile: function(elem, attrs) {
+        var inputElem = elem.find('input');
+        // Can use this to copy over classes
       }
     };
   });

@@ -311,4 +311,40 @@ describe('efForm', function() {
       });
     });
   });
+
+  describe('form styles', function() {
+
+    it('should be in basic mode by default', function () {
+      elem = angular.element(
+        '<form name="testForm" ef-form ef-resource="foo"></form>'
+      );
+      scope = $rootScope.$new();
+      $compile(elem)(scope);
+      formScope = elem.scope();
+      expect(formScope.formStyle).toEqual('basic');
+    });
+
+    it('should add form-line class when inline', function () {
+      elem = angular.element(
+        '<form name="testForm" ef-form ef-resource="foo" ef-style="inline"></form>'
+      );
+      scope = $rootScope.$new();
+      $compile(elem)(scope);
+      formScope = elem.scope();
+      expect(formScope.formStyle).toEqual('inline');
+      expect(elem.hasClass('form-inline')).toBeTruthy();
+    });
+
+    it('should add form-horizontal class when horizontal', function () {
+      elem = angular.element(
+        '<form name="testForm" ef-form ef-resource="foo" ef-style="horizontal"></form>'
+      );
+      scope = $rootScope.$new();
+      $compile(elem)(scope);
+      formScope = elem.scope();
+      expect(formScope.formStyle).toEqual('horiztonal');
+      expect(elem.hasClass('form-horizontal')).toBeTruthy();
+    });
+
+  });
 });
