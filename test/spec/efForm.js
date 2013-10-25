@@ -86,7 +86,7 @@ describe('efForm', function() {
     });
 
     it('should create a new object as the form model', function() {
-      expect(formScope.efModel).toBeDefined();
+      expect(formScope.model).toBeDefined();
     });
 
     it('should not be in edit mode', function () {
@@ -107,19 +107,19 @@ describe('efForm', function() {
     });
 
     it('should set the resource as the form model', function() {
-      expect(formScope.efModel).toEqual(formScope.resourceObj);
+      expect(formScope.model).toEqual(formScope.resourceObj);
     });
 
     it('should create a copy of the resource if passed a RestangularElement', function() {
-      expect(formScope.efModel.route).toEqual('foo');
-      formScope.efModel.bar = 'bar';
+      expect(formScope.model.route).toEqual('foo');
+      formScope.model.bar = 'bar';
       expect(scope.testResource.bar).not.toBeDefined();
       expect(formScope.isCollection).toBeFalsy();
     });
 
     it('should create a separate copy for pristine state', function () {
       expect(formScope.pristineModel.route).toEqual('foo');
-      formScope.efModel.bar = 'bar';
+      formScope.model.bar = 'bar';
       expect(formScope.pristineModel).toBeDefined();
     });
 
@@ -154,7 +154,7 @@ describe('efForm', function() {
     beforeEach(function() {
       elem = angular.element(
         '<form name="testForm" ef-form ef-resource="foo">' +
-          '<input type="text" name="testInput" ng-model="efModel.test"></input>' +
+          '<input type="text" name="testInput" ng-model="model.test"></input>' +
         '</form>'
       );
       scope = $rootScope.$new();
@@ -172,10 +172,10 @@ describe('efForm', function() {
     it('reset should set the form back to pristine', function () {
       inputField.$setViewValue('bar');
       expect(formScope.form.$pristine).toBeFalsy();
-      expect(formScope.efModel.test).toEqual('bar');
+      expect(formScope.model.test).toEqual('bar');
       formScope.reset();
-      expect(scope.efModel).toEqual(scope.pristineModel);
-      expect(formScope.efModel.test).not.toBeDefined();
+      expect(scope.model).toEqual(scope.pristineModel);
+      expect(formScope.model.test).not.toBeDefined();
       expect(formScope.form.$pristine).toBeTruthy();
     });
 
@@ -191,10 +191,10 @@ describe('efForm', function() {
       expect(formScope.reset).toHaveBeenCalled();
     });
 
-    it('reset should keep the resourceObj and efModel objects in sync', function () {
+    it('reset should keep the resourceObj and model objects in sync', function () {
       elem = angular.element(
         '<form name="testForm" ef-form ef-resource="testResource">' +
-          '<input type="text" name="testInput" ng-model="efModel.test"></input>' +
+          '<input type="text" name="testInput" ng-model="model.test"></input>' +
         '</form>'
       );
       scope = $rootScope.$new();
@@ -202,13 +202,13 @@ describe('efForm', function() {
       $compile(elem)(scope);
       formScope = elem.scope();
       inputField = formScope.form.testInput;
-      expect(formScope.efModel).toEqual(formScope.resourceObj);
+      expect(formScope.model).toEqual(formScope.resourceObj);
 
       inputField.$setViewValue('foo');
-      expect(formScope.efModel.test).toEqual(formScope.resourceObj.test);
+      expect(formScope.model.test).toEqual(formScope.resourceObj.test);
 
       formScope.reset();
-      expect(formScope.efModel.test).not.toBeDefined();
+      expect(formScope.model.test).not.toBeDefined();
       expect(formScope.resourceObj.test).not.toBeDefined();
     });
 
@@ -228,13 +228,13 @@ describe('efForm', function() {
       spyOn(formScope.resourceObj, 'post');
       spyOn(formScope, 'responseHandler'); // Stub out the response handler
       formScope.submit();
-      expect(formScope.resourceObj.post).toHaveBeenCalledWith(formScope.efModel);
+      expect(formScope.resourceObj.post).toHaveBeenCalledWith(formScope.model);
     });
 
     it('submit on an element should PUT to the resource', function () {
       elem = angular.element(
         '<form name="testForm" ef-form ef-resource="testResource">' +
-          '<input type="text" name="testInput" ng-model="efModel.test"></input>' +
+          '<input type="text" name="testInput" ng-model="model.test"></input>' +
         '</form>'
       );
       scope = $rootScope.$new();

@@ -22,7 +22,7 @@ angular.module('easyForms').
         scope.form = scope[attrs['name']];
         scope.errors = {};
         scope.messages = []; // Something like "Submission successful"
-        scope.efModel = {}; // Data model for the form
+        scope.model = {}; // Data model for the form
         scope.pristineModel = {};
 
         // Config variables
@@ -63,9 +63,9 @@ angular.module('easyForms').
             if (efUtils.isRestangularCollection(resource)) {
               scope.resourceObj = resource;
             } else {
-              // Will a PUT be made on the efResource or the efModel object?
+              // Will a PUT be made on the efResource or the model object?
               scope.resourceObj = Restangular.copy(resource);
-              scope.efModel = scope.resourceObj;
+              scope.model = scope.resourceObj;
               scope.pristineModel = Restangular.copy(scope.resourceObj); // Need a separate copy to store pristine state
               scope.isCollection = false;
               scope.editMode = true;
@@ -104,10 +104,10 @@ angular.module('easyForms').
          */
 
         scope.reset = function() {
-          if (efUtils.isRestangularResource(scope.efModel)) {
-            scope.efModel = scope.resourceObj = Restangular.copy(scope.pristineModel);
+          if (efUtils.isRestangularResource(scope.model)) {
+            scope.model = scope.resourceObj = Restangular.copy(scope.pristineModel);
           } else {
-            scope.efModel = angular.copy(scope.pristineModel);
+            scope.model = angular.copy(scope.pristineModel);
           }
           scope.$clearMessages();
           scope.$clearErrors();
@@ -124,7 +124,7 @@ angular.module('easyForms').
           if (scope.editMode) {
             promise = scope.resourceObj.put();
           } else {
-            promise = scope.resourceObj.post(scope.efModel);
+            promise = scope.resourceObj.post(scope.model);
           }
           scope.$emit(scope.efConfig.submitSignal);
           scope.responseHandler(promise);

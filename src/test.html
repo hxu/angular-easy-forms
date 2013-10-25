@@ -26,13 +26,13 @@
 
       <form name="testForm" ef-form ef-resource="test">
         <div ef-messages></div>
-        <input type="text" name="testField" ng-model="efModel.testField"></input>
+        <input type="text" name="testField" ng-model="model.testField"></input>
         route: {{ efResource.route }}
 
         <input type="text" name="testField2" test-input></input>
 
         <pre>
-          {{ efModel }}
+          {{ model }}
         </pre>
 
         <div ef-submit></div>
@@ -40,6 +40,8 @@
       </form>
 
       <div test-dir test-attr="test">blaraargh</div>
+
+      <div test-comp class="bar"></div>
 
     </div>
 
@@ -72,10 +74,13 @@
       angular.module('easyForms').
         directive('testInput', function() {
           return {
-            link: function(scope, elem, attrs) {
-              var modelName = 'efModel.' + attrs.name;
-              attrs.$set('ngModel', modelName);
-              scope.$apply();
+            priority: 100,
+            compile: function(elem, attrs) {
+              var modelName = 'model.' + attrs.name;
+//              attrs.$set('ngModel', modelName);
+              // Still not being registered -- meaning that the ngModel directive is not being compiled
+              var elemStr = '<input type="text" ng-model="' + modelName +'"></input>';
+              elem.replaceWith(elemStr);
             }
           };
         });
@@ -91,6 +96,27 @@
               });
             }
           }
+        });
+
+      angular.module('easyForms').
+        directive('testComp', function() {
+          return {
+//            compile: function(elem, attrs, ctrl) {
+//              var elemStr = '<div'
+//              console.log(attrs);
+//              angular.forEach(attrs.$attr, function(attrTag, attrKey) {
+//                var attrVal = attrs[attrKey];
+//                if (attrVal == "") {
+//                  elemStr += ' ' + attrTag;
+//                } else {
+//                  elemStr += ' ' + attrTag + '=' + attrs[attrKey];
+//                }
+//              });
+//              elemStr +=  '>foo</div>';
+//              elem.replaceWith(elemStr);
+//            }
+            template: '<div>foo</div>'
+          };
         });
     </script>
 

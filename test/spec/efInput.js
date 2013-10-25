@@ -26,13 +26,13 @@ describe('efForm', function() {
   }));
 
 
-  it('should set the inputs ngModel to efModel.{name}', function () {
-    console.log(elem);
-    inputField = formScope.form.testInput;
-    console.log(formScope.form);
-    console.log(inputField);
+//  it('should set the inputs ngModel to model.{name}', function () {
+//    console.log(elem);
+//    inputField = formScope.form.testInput;
+//    console.log(formScope.form);
+//    console.log(inputField);
 //    inputField.$setViewValue('bar');
-//    expect(formScope.efModel.testInput).toEqual('bar');
-  });
+//    expect(formScope.model.testInput).toEqual('bar');
+//  });
 
 });
