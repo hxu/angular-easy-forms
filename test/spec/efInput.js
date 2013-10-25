@@ -1,6 +1,6 @@
 'use strict';
 
-describe('efForm', function() {
+describe('efInput', function() {
   var elem, scope, formScope
   var $compile, $rootScope, efUtils, Restangular;
   var inputField;
@@ -27,7 +27,6 @@ describe('efForm', function() {
   }));
 
   it('should set the label text based on efLabel', function () {
-    console.log(elem);
     var label = elem.find('label');
     expect(label.length).not.toEqual(0);
     expect(label.html()).toEqual('Label');
@@ -35,6 +34,7 @@ describe('efForm', function() {
 
   it('should copy the classes into the input', function () {
     expect(elem.find('input').hasClass('bar')).toBeTruthy();
+    expect(elem.find('input').hasClass('form-group')).toBeFalsy();
   });
 
   it('should infer name if only id is provided', function () {

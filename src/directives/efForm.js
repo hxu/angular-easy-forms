@@ -17,7 +17,7 @@ angular.module('easyForms').
         };
         scope.hasMessages = function() {
           return scope.messages.length > 0;
-        }
+        };
 
         scope.form = scope[attrs['name']];
         scope.errors = {};
@@ -36,6 +36,18 @@ angular.module('easyForms').
           successMessage: 'Form submission success',
           errorMessage: 'Form submission error',
         };
+
+        // Configure the form style
+        scope.formStyle = attrs.efStyle || 'basic';
+        var formStyleClass = {
+          basic: null,
+          inline: 'form-inline',
+          horizontal: 'form-horizontal'
+        };
+
+        if (formStyleClass[scope.formStyle] != null) {
+          elem.addClass(formStyleClass[scope.formStyle]);
+        }
 
         /*
          * Form Initialization

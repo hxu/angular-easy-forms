@@ -26,10 +26,11 @@
 
       <form name="testForm" ef-form ef-resource="test">
         <div ef-messages></div>
+
         <input type="text" name="testField" ng-model="model.testField"></input>
         route: {{ efResource.route }}
 
-        <input type="text" name="testField2" ef-input ef-label="MyLabel" class="bar"></input>
+        <input type="text" name="testField2" ef-input ef-label="MyLabel" class="bar baz"></input>
 
         <pre>
           {{ model }}

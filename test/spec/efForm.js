@@ -324,7 +324,7 @@ describe('efForm', function() {
       expect(formScope.formStyle).toEqual('basic');
     });
 
-    it('should add form-line class when inline', function () {
+    it('should add form-inline class when inline', function () {
       elem = angular.element(
         '<form name="testForm" ef-form ef-resource="foo" ef-style="inline"></form>'
       );
@@ -342,7 +342,7 @@ describe('efForm', function() {
       scope = $rootScope.$new();
       $compile(elem)(scope);
       formScope = elem.scope();
-      expect(formScope.formStyle).toEqual('horiztonal');
+      expect(formScope.formStyle).toEqual('horizontal');
       expect(elem.hasClass('form-horizontal')).toBeTruthy();
     });
 
