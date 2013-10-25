@@ -9,6 +9,7 @@
     <title>Easy Forms test</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
+    <link href="bower_components/sass-bootstrap/dist/css/bootstrap.css" rel="stylesheet" media="screen">
 </head>
   <body ng-app="easyForms">
     <!--[if lt IE 7]>
@@ -23,9 +24,13 @@
     <!-- Add your site or application content here -->
     <div class="container" ng-controller="testCtrl">
 
-      <form name="testForm"ef-form ef-resource="{{ test }}">
-        <input type="text"></input>
+      <form name="testForm" ef-form ef-resource="test">
+        <div ef-messages></div>
+        <input type="text" name="testField" ng-model="efModel.testField"></input>
         route: {{ efResource.route }}
+
+        <div ef-submit></div>
+        <div ef-reset></div>
       </form>
 
       <div test-dir test-attr="test">blaraargh</div>
@@ -46,24 +51,16 @@
     <script src="module.js"></script>
     <script src="services/efUtils.js"></script>
     <script src="directives/efForm.js"></script>
-    <script src="directives/efInputText.js"></script>
+    <script src="directives/efInput.js"></script>
+    <script src="directives/efButtons.js"></script>
+    <script src="directives/efMessages.js"></script>
     <!-- endbuild -->
 
     <script type="application/javascript">
+
       angular.module('easyForms').
         controller('testCtrl', function($scope, Restangular, $timeout) {
           $scope.test = 'foo';
-          var elem = angular.element('form');
-
-          $timeout(function() {
-            console.log('changing element');
-            $scope.test = 'bar'
-          }, 1000);
-
-          $timeout(function() {
-            console.log('changing to null');
-            delete $scope.test;
-          }, 1500)
         });
 
       angular.module('easyForms').
@@ -81,6 +78,7 @@
           }
         });
     </script>
+
 
   </body>
 </html>

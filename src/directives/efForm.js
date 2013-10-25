@@ -15,6 +15,9 @@ angular.module('easyForms').
         scope.hasErrors = function() {
           return !_.isEmpty(scope.errors);
         };
+        scope.hasMessages = function() {
+          return scope.messages.length > 0;
+        }
 
         scope.form = scope[attrs['name']];
         scope.errors = {};
@@ -106,6 +109,8 @@ angular.module('easyForms').
           } else {
             scope.efModel = angular.copy(scope.pristineModel);
           }
+          scope.$clearMessages();
+          scope.$clearErrors();
           scope.form.$setPristine();
           scope.$emit(scope.efConfig.resetSignal);
         };
