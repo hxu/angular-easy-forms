@@ -49,6 +49,8 @@ angular.module('easyForms').
         // Transfer classes to the input
         var getClasses = function(classStr) {
           var classArray = classStr.split(' ');
+          // ensure the input has class 'form-control'
+          classArray.push('form-control');
           // remove empty strings
           classArray = _.compact(classArray);
           // remove duplicates

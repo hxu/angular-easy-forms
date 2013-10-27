@@ -33,7 +33,7 @@ describe('efInput', function() {
   });
 
   it('should have the form-control class', function () {
-    expect(elem.find('input').hasClass('form-input')).toBeTruthy();
+    expect(elem.find('input').hasClass('form-control')).toBeTruthy();
   });
 
   it('should not create a label tag if efLabel is null', function () {

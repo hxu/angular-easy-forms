@@ -37,7 +37,7 @@ describe('easyForm service', function() {
 
     it('should allow overriding success message from the attributes', function () {
       var attrs = {
-        successMessage: 'Custom message'
+        efSuccessMessage: 'Custom message'
       };
       scope.$initialize('foo', attrs);
       expect(scope.efConfig.successMessage).toEqual('Custom message');
@@ -45,7 +45,7 @@ describe('easyForm service', function() {
 
     it('should allow overriding error message from the attributes', function () {
       var attrs = {
-        errorMessage: 'Custom message'
+        efErrorMessage: 'Custom message'
       };
       scope.$initialize('foo', attrs);
       expect(scope.efConfig.errorMessage).toEqual('Custom message');

@@ -80,6 +80,16 @@ angular.module('easyForms').
           } else {
             this.efConfig = defaultConfig;
           }
+          // Also a few special configuration attributes
+          var attrToConfigMap = {
+            efSuccessMessage: 'successMessage',
+            efErrorMessage: 'errorMessage',
+          };
+          angular.forEach(attrToConfigMap, function(confKey, attrKey) {
+            if (attrs[attrKey]) {
+              scope.efConfig[confKey] = attrs[attrKey];
+            }
+          });
 
           scope.$on(scope.efConfig.triggerResetSignal, function() {scope.reset(scope)});
         },

@@ -126,6 +126,23 @@ describe('efForm', function() {
     it('should be in edit mode', function() {
       expect(formScope.editMode).toBeTruthy();
     });
+
+    it('controls should be populated with the data', function () {
+      elem = angular.element(
+        '<form name="testForm" ef-form ef-resource="testResource">' +
+          '<input type="text" name="testInput" ef-input></input>' +
+          '</form>'
+      );
+      scope = $rootScope.$new();
+      var resObj = {testInput: 'bar', id: 1};
+      scope.testResource = Restangular.restangularizeElement('', resObj, 'foo');
+      $compile(elem)(scope);
+      formScope = elem.scope();
+      scope.$apply();
+
+      var inputField = formScope.form.testInput;
+      expect(inputField.$viewValue).toEqual('bar');
+    });
   });
 
   describe('initializing with a config object', function () {
@@ -177,6 +194,57 @@ describe('efForm', function() {
       expect(scope.model).toEqual(scope.pristineModel);
       expect(formScope.model.test).not.toBeDefined();
       expect(formScope.form.$pristine).toBeTruthy();
+    });
+
+    it('reset should also clear the view values of the controls', function () {
+      // We need this because the model doesn't update if the control is invalid
+      // For example, if the input is email type, the model doesn't get updated until
+      // There is an @ in the input and the domain is valid.  So even if we reset the model object,
+      // The control won't reflect it
+      elem = angular.element(
+        '<form name="testForm" ef-form ef-resource="foo">' +
+          '<input type="email" name="testInput" ef-input></input>' +
+          '</form>'
+      );
+      scope = $rootScope.$new();
+      $compile(elem)(scope);
+      formScope = elem.scope();
+      inputField = formScope.form.testInput;
+
+      inputField.$setViewValue('foo');
+      expect(inputField.$valid).toBeFalsy();
+      expect(inputField.$pristine).toBeFalsy();
+
+      formScope.reset();
+      formScope.$apply();
+      expect(inputField.$viewValue).toBeNaN();
+      expect(inputField.$valid).toBeTruthy();
+      expect(inputField.$pristine).toBeTruthy();
+    });
+
+    it('reset with prior model should reset view value back to original value', function () {
+      elem = angular.element(
+        '<form name="testForm" ef-form ef-resource="testResource">' +
+          '<input type="email" name="testInput" ef-input>' +
+          '</form>'
+      );
+      scope = $rootScope.$new();
+      var resObj = {testInput: 'foo@bar.com', id: 1};
+      scope.testResource = Restangular.restangularizeElement('', resObj, 'foo');
+
+      $compile(elem)(scope);
+      formScope = elem.scope();
+      formScope.$apply();
+      inputField = formScope.form.testInput;
+
+      inputField.$setViewValue('baz');
+      expect(inputField.$valid).toBeFalsy();
+
+      formScope.reset();
+      expect(inputField.$viewValue).toEqual('foo@bar.com');
+      expect(formScope.model.testInput).toEqual('foo@bar.com');
+      expect(inputField.$valid).toBeTruthy();
+      expect(inputField.$pristine).toBeTruthy();
     });
 
     it('reset should emit a signal', function () {
