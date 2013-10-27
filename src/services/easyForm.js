@@ -46,6 +46,17 @@ angular.module('easyForms').
          */
 
         $initialize: function(scope, resource, attrs) {
+          scope.form = scope[attrs['name']];
+          scope.errors = {};
+          scope.messages = []; // Something like "Submission successful"
+          scope.model = {}; // Data model for the form
+          scope.pristineModel = {};
+
+          // Variables holding the state of the form
+          scope.editMode = false;
+          scope.isCollection = true;
+
+
           if (resource == undefined || !efUtils.isRestangularResource(resource)) {
             scope.resourceObj = Restangular.all(attrs.efResource);
           } else {
@@ -69,6 +80,8 @@ angular.module('easyForms').
           } else {
             scope.efConfig = defaultConfig;
           }
+
+          scope.$on(scope.efConfig.triggerResetSignal, function() {scope.reset(scope)});
         },
 
         hasErrors: function() {
@@ -145,12 +158,15 @@ angular.module('easyForms').
       };
 
       svc.extendScope = function(scope) {
+
+
         angular.forEach(svc, function(func, name) {
           if (name == 'extendScope') {
             return;
           }
           scope[name] = _.bind(func, scope, scope);
         });
+
       };
 
       return svc;

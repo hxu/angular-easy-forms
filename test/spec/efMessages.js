@@ -1,6 +1,6 @@
 'use strict';
 
-describe('efForm', function() {
+describe('efMessages', function() {
   var elem, scope, formScope
   var $compile, $rootScope, efUtils, Restangular;
   var messageDiv;
@@ -24,16 +24,16 @@ describe('efForm', function() {
     $compile(elem)(scope);
     formScope = elem.scope();
     messageDiv = elem.find('div');
+    scope.$apply();
   }));
 
   it('should be hidden when there are no messages', function () {
-    scope.$apply();
     expect(messageDiv.hasClass('ng-hide')).toBeTruthy();
   });
 
   it('should be visible when there are messages', function () {
     formScope.messages.push('foo');
-    scope.$apply();
+    formScope.$apply();
     expect(messageDiv.hasClass('ng-hide')).toBeFalsy();
   });
 

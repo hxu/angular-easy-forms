@@ -8,16 +8,6 @@ angular.module('easyForms').
       },
       require: '^form',
       link: function(scope, elem, attrs, controller) {
-        // Variables holding the state of the form
-        scope.editMode = false;
-        scope.isCollection = true;
-
-        scope.form = scope[attrs['name']];
-        scope.errors = {};
-        scope.messages = []; // Something like "Submission successful"
-        scope.model = {}; // Data model for the form
-        scope.pristineModel = {};
-
         // Configure the form style
         scope.formStyle = attrs.efStyle || 'basic';
         var formStyleClass = {
@@ -30,14 +20,13 @@ angular.module('easyForms').
           elem.addClass(formStyleClass[scope.formStyle]);
         }
 
+        // Extend and initialize the scope
         easyForm.extendScope(scope);
-
         scope.$initialize(scope.efResource, attrs);
         scope.$watch('efResource', function(newVal) {
           scope.$initialize(newVal, attrs);
         });
 
-        scope.$on(scope.efConfig.triggerResetSignal, function() {scope.reset(scope)});
       }
     };
   }]);
