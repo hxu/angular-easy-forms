@@ -12,7 +12,20 @@ angular.module('easyForms').
 
     var svc = {
 
-      $initialize: function(scope, resource) {
+      /*
+       * @doc function
+       * @name easyForms.efForm:$initialize
+       *
+       * @description Initializes the form by:
+       *  - resolving the resource attribute to a resource object
+       *  - if a configuration object is provided, merging it into the form's configuration
+       *
+       * @param {Restangular resource} The resource to bind the form to.  If this is null, the form will create a new
+       * Restangular object with the string value of the efResource attribute on the directive
+       *
+       */
+
+      $initialize: function(scope, resource, attrs, defaultConfig) {
         if (resource == undefined || !efUtils.isRestangularResource(resource)) {
           scope.resourceObj = Restangular.all(attrs.efResource);
         } else {
@@ -50,8 +63,8 @@ angular.module('easyForms').
         } else {
           scope.model = angular.copy(scope.pristineModel);
         }
-        scope.$clearMessages();
-        scope.$clearErrors();
+        scope.$clearMessages(scope);
+        scope.$clearErrors(scope);
         scope.form.$setPristine();
         scope.$emit(scope.efConfig.resetSignal);
       },
@@ -59,7 +72,7 @@ angular.module('easyForms').
       submit: function(scope) {
         var promise;
 
-        scope.$clearErrors();
+        scope.$clearErrors(scope);
 
         if (scope.editMode) {
           promise = scope.resourceObj.put();
@@ -101,5 +114,7 @@ angular.module('easyForms').
         scope[name] = _.bind(func, scope, scope);
       });
     };
+
+    return svc;
 
   }]);
