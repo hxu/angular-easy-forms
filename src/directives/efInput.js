@@ -2,12 +2,13 @@
 
 angular.module('easyForms').
 
-  /*
+  /**
    * @ngdoc directive
    * @name easyForms.efInput
    *
    * @description use as an attribute on an input tag.
    */
+
   directive('efInput', function() {
     return {
       replace: true,

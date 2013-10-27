@@ -1,7 +1,9 @@
 'use strict';
 
-/*
+/**
  * @ngdoc service
+ * @name easyForms.easyForm
+ *
  * @description This service encapsulates all of the functions used by the easyForm directives.
  * These have been broken out into this service instead of being put into the directive directly so that users don't
  * have to use the directive in order to use some of the functions
@@ -32,15 +34,14 @@ angular.module('easyForms').
 
       var svc = {
 
-        /*
+        /**
          * @doc function
          * @name easyForms.efForm:$initialize
          *
-         * @description Initializes the form by:
-         *  - resolving the resource attribute to a resource object
-         *  - if a configuration object is provided, merging it into the form's configuration
+         * @description Initializes the form by: a) resolving the resource attribute to a resource object, b) if a configuration object
+         * is provided, merging it into the form's configuration
          *
-         * @param {Restangular resource} The resource to bind the form to.  If this is null, the form will create a new
+         * @param {Restangular resource} resource The resource to bind the form to.  If this is null, the form will create a new
          * Restangular object with the string value of the efResource attribute on the directive
          *
          */

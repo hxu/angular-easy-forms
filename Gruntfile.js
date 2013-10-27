@@ -181,14 +181,16 @@ module.exports = function (grunt) {
       }
     },
     docular: {
+      showDocularDocs: false,
+      showAngularDocs: false,
       groups: [
         {
-          groupTitle: 'angular-easy-forms',
+          groupTitle: 'EasyForms',
           groupId: 'angulargm-<%= pkg.version %>',
           sections: [
             {
-              id: 'usage',
-              title: 'Usage',
+              id: 'api',
+              title: 'API',
               scripts: [
                 "<%= yeoman.app %>/directives/",
                 "<%= yeoman.app %>/services/",
@@ -198,8 +200,6 @@ module.exports = function (grunt) {
           ]
         }
       ],
-      showDocularDocs: false,
-      showAngularDocs: false
     }
 
   });
