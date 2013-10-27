@@ -32,6 +32,23 @@ describe('efInput', function() {
     expect(label.html()).toEqual('Label');
   });
 
+  it('should have the form-control class', function () {
+    expect(elem.find('input').hasClass('form-input')).toBeTruthy();
+  });
+
+  it('should not create a label tag if efLabel is null', function () {
+    elem = angular.element(
+      '<form name="testForm" ef-form ef-resource="foo">' +
+        '<input type="text" name="testInput" ef-input placeholder="fooPlaceholder"></input>' +
+        '</form>'
+    );
+
+    scope = $rootScope.$new();
+    $compile(elem)(scope);
+    var label = elem.find('label');
+    expect(_.isEmpty(label)).toBeTruthy();
+  });
+
   it('should copy the classes into the input', function () {
     expect(elem.find('input').hasClass('bar')).toBeTruthy();
     expect(elem.find('input').hasClass('form-group')).toBeFalsy();

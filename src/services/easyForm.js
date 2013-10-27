@@ -100,11 +100,11 @@ angular.module('easyForms').
           this.errors = {};
         },
 
-        canSave: function() {
+        canSubmit: function() {
           return !this.form.$pristine && this.form.$valid;
         },
 
-        canRevert: function() {
+        canReset: function() {
           return !this.form.$pristine;
         },
 

@@ -17,12 +17,12 @@ module.exports = function (grunt) {
     pkg: grunt.file.readJSON('package.json'),
     meta: {
       banner: '/**\n' +
-      ' * <%= pkg.description %>\n' +
-      ' * @version v<%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd") %>\n' +
-      ' * @link <%= pkg.homepage %>\n' +
-      ' * @author <%= pkg.author %>\n' +
-      ' * @license MIT License, http://www.opensource.org/licenses/MIT\n' +
-      ' */\n'
+        ' * <%= pkg.description %>\n' +
+        ' * @version v<%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd") %>\n' +
+        ' * @link <%= pkg.homepage %>\n' +
+        ' * @author <%= pkg.author %>\n' +
+        ' * @license MIT License, http://www.opensource.org/licenses/MIT\n' +
+        ' */\n'
     },
     yeoman: {
       // configurable paths
@@ -51,7 +51,7 @@ module.exports = function (grunt) {
       },
       dist: {
         src: ['src/module.js', 'src/directives/*.js', 'src/services/*.js'],
-        dest: '<%= yeoman.dist %>/<%= pkg.name %>-<%= pkg.version %>.js'
+        dest: '<%= yeoman.dist %>/<%= pkg.name %>.js'
       }
     },
     uglify: {
@@ -60,7 +60,7 @@ module.exports = function (grunt) {
       },
       dist: {
         src: ['<%= concat.dist.dest %>'],
-        dest: '<%= yeoman.dist %>/<%= pkg.name %>-<%= pkg.version %>.min.js'
+        dest: '<%= yeoman.dist %>/<%= pkg.name %>.min.js'
       }
     },
     connect: {
@@ -98,13 +98,13 @@ module.exports = function (grunt) {
     clean: {
       dist: {
         files: [{
-          dot: true,
-          src: [
-            '.tmp',
-            '<%= yeoman.dist %>/*',
-            '!<%= yeoman.dist %>/.git*'
-          ]
-        }]
+                  dot: true,
+                  src: [
+                    '.tmp',
+                    '<%= yeoman.dist %>/*',
+                    '!<%= yeoman.dist %>/.git*'
+                  ]
+                }]
       },
       server: '.tmp'
     },
@@ -124,25 +124,31 @@ module.exports = function (grunt) {
         dest: '<%= yeoman.dist %>'
       }
     },
+    usemin: {
+      html: ['<%= yeoman.dist %>/{,*/}*.html'],
+      options: {
+        dirs: ['<%= yeoman.dist %>']
+      }
+    },
     htmlmin: {
       dist: {
         options: {
           /*removeCommentsFromCDATA: true,
-          // https://github.com/yeoman/grunt-usemin/issues/44
-          //collapseWhitespace: true,
-          collapseBooleanAttributes: true,
-          removeAttributeQuotes: true,
-          removeRedundantAttributes: true,
-          useShortDoctype: true,
-          removeEmptyAttributes: true,
-          removeOptionalTags: true*/
+           // https://github.com/yeoman/grunt-usemin/issues/44
+           //collapseWhitespace: true,
+           collapseBooleanAttributes: true,
+           removeAttributeQuotes: true,
+           removeRedundantAttributes: true,
+           useShortDoctype: true,
+           removeEmptyAttributes: true,
+           removeOptionalTags: true*/
         },
         files: [{
-          expand: true,
-          cwd: '<%= yeoman.app %>',
-          src: ['views/*.html'],
-          dest: '<%= yeoman.dist %>'
-        }]
+                  expand: true,
+                  cwd: '<%= yeoman.app %>',
+                  src: ['*.html'],
+                  dest: '<%= yeoman.dist %>'
+                }]
       }
     },
     concurrent: {
@@ -167,11 +173,11 @@ module.exports = function (grunt) {
     ngmin: {
       dist: {
         files: [{
-          expand: true,
-          cwd: '<%= yeoman.dist %>/scripts',
-          src: '*.js',
-          dest: '<%= yeoman.dist %>/scripts'
-        }]
+                  expand: true,
+                  cwd: '<%= yeoman.dist %>/scripts',
+                  src: '*.js',
+                  dest: '<%= yeoman.dist %>/scripts'
+                }]
       }
     },
     docular: {
@@ -212,13 +218,17 @@ module.exports = function (grunt) {
   });
 
   grunt.registerTask('test', [
+    'clean:server',
     'connect:test',
     'karma'
   ]);
 
   grunt.registerTask('build', [
+    'clean:dist',
+    'htmlmin',
     'concat',
     'uglify',
+    'usemin',
   ]);
 
   grunt.registerTask('default', [

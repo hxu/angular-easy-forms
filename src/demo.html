@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Easy Forms test</title>
+    <title>EasyForms demos</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
     <link href="bower_components/sass-bootstrap/dist/css/bootstrap.css" rel="stylesheet" media="screen">
@@ -21,19 +21,60 @@
       <script src="bower_components/json3/lib/json3.min.js"></script>
     <![endif]-->
 
-    <!-- Add your site or application content here -->
-    <div class="container" ng-controller="testCtrl">
+    <div class="container">
+      <h1>EasyForms demo</h1>
 
-      <form name="testForm" ef-form ef-resource="test">
-        <div ef-messages></div>
+      <div class="row">
+        <div class="col-lg-12">
+          <h2>Basic Form</h2>
+        </div>
+        <div class="col-lg-3">
+          A very simple example.
+        </div>
+        <div class="col-lg-9">
+          Enter your email to receive updates!
+          <form name="BasicExample" ef-form ef-resource="signup">
+            <div ef-messages></div>
+            <input ef-input type="email" name="email" placeholder="Email">
+            <div ef-submit></div>&nbsp;<div ef-reset></div>
+          </form>
+        </div>
+      </div>
 
-        <pre>
-          {{ model }}
-        </pre>
+      <div class="row">
+        <div class="col-lg-12">
+          <h2>Inline form</h2>
+        </div>
+        <div class="col-lg-3">
+          Built in support for Bootstrap's inline layout
+        </div>
+        <div class="col-lg-9">
+          <form name="BasicExample" ef-form ef-resource="login" ef-style="inline">
+            <div ef-messages></div>
+            <input ef-input type="email" name="email" placeholder="Email">
+            <input ef-input type="password" name="password" placeholder="Password">
+            <div ef-submit></div>
+          </form>
+        </div>
+      </div>
 
-        <div ef-submit></div>
-        <div ef-reset></div>
-      </form>
+      <div class="row">
+        <div class="col-lg-12">
+          <h2>Horiztonal form</h2>
+        </div>
+        <div class="col-lg-3">
+          Also for the horizontal form layout
+        </div>
+        <div class="col-lg-9">
+          <form name="BasicExample" ef-form ef-resource="login" ef-style="inline">
+            <div ef-messages></div>
+            <input ef-input type="email" name="email" placeholder="Email">
+            <input ef-input type="password" name="password" placeholder="Password">
+            <input ef-checkbox type="checkbox" name="remember">Remember me
+            <div ef-submit></div>
+          </form>
+        </div>
+      </div>
 
     </div>
 
@@ -47,7 +88,7 @@
     <script src="bower_components/angular-cookies/angular-cookies.js"></script>
     <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
 
-    <!-- build:js({.tmp,app}) scripts/scripts.js -->
+    <!-- build:js({.tmp,app}) angular-easy-forms.js -->
     <script src="module.js"></script>
     <script src="services/efUtils.js"></script>
     <script src="services/easyForm.js"></script>

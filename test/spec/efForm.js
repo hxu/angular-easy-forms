@@ -224,6 +224,15 @@ describe('efForm', function() {
       expect(formScope.$clearErrors).toHaveBeenCalled();
     });
 
+    it('submit should not fire if canSubmit is false', function () {
+      spyOn(formScope, 'canSubmit').andReturn(false);
+      spyOn(formScope, '$emit');
+      spyOn(formScope, '$clearErrors');
+      formScope.submit();
+      expect(formScope.$emit).not.toHaveBeenCalledWith('efFormSubmit');
+      expect(formScope.$clearErrors).not.toHaveBeenCalled();
+    });
+
     it('submit on a collection or new object should POST to the resource', function () {
       spyOn(formScope.resourceObj, 'post');
       spyOn(formScope, 'responseHandler'); // Stub out the response handler

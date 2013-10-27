@@ -2,10 +2,7 @@
 
 describe('easyForm service', function() {
 
-  describe('configuration and scope extending', function() {
-    it('should extend a scope with form handling functions', function () {
-    });
-
+  describe('load time configuration and scope extending', function() {
     describe('config defaults', function() {
       beforeEach(module('easyForms', function(easyFormProvider) {
         easyFormProvider.overrideDefault('successMessage', 'foo!');
@@ -17,6 +14,41 @@ describe('easyForm service', function() {
         scope.$initialize('foo', {});
         expect(scope.efConfig.successMessage).toEqual('foo!');
       }));
+    });
+  });
+
+  describe('form instance configuration', function() {
+    var scope;
+
+    beforeEach(function() {
+      module('easyForms')
+    });
+
+    beforeEach(inject(function(easyForm, $rootScope) {
+      scope = $rootScope.$new();
+      easyForm.extendScope(scope);
+    }));
+
+    it('should extend a scope with form handling functions', function () {
+      scope.$initialize('foo', {});
+      expect(scope.submit).toBeDefined();
+      expect(scope.reset).toBeDefined();
+    });
+
+    it('should allow overriding success message from the attributes', function () {
+      var attrs = {
+        successMessage: 'Custom message'
+      };
+      scope.$initialize('foo', attrs);
+      expect(scope.efConfig.successMessage).toEqual('Custom message');
+    });
+
+    it('should allow overriding error message from the attributes', function () {
+      var attrs = {
+        errorMessage: 'Custom message'
+      };
+      scope.$initialize('foo', attrs);
+      expect(scope.efConfig.errorMessage).toEqual('Custom message');
     });
   });
 
@@ -34,20 +66,20 @@ describe('easyForm service', function() {
       scope.form = jasmine.createSpyObj('form', ['$pristine', '$valid']);
     }));
 
-    it('canSave should be true when the form has been changed and is valid', function () {
+    it('canSubmit should be true when the form has been changed and is valid', function () {
       scope.form.$pristine = true;
       scope.form.$valid = false;
-      expect(scope.canSave()).toBeFalsy();
+      expect(scope.canSubmit()).toBeFalsy();
       scope.form.$pristine = false;
       scope.form.$valid = true;
-      expect(scope.canSave()).toBeTruthy();
+      expect(scope.canSubmit()).toBeTruthy();
     });
 
-    it('canRevert should be true when the has been changed', function () {
+    it('canReset should be true when the has been changed', function () {
       scope.form.$pristine = true;
-      expect(scope.canRevert()).toBeFalsy();
+      expect(scope.canReset()).toBeFalsy();
       scope.form.$pristine = false;
-      expect(scope.canRevert()).toBeTruthy();
+      expect(scope.canReset()).toBeTruthy();
     });
 
     it('hasMessages should be true if the messages array is populated', function () {
@@ -64,4 +96,20 @@ describe('easyForm service', function() {
       expect(scope.hasErrors()).toBeTruthy();
     });
   });
+
+  describe('form actions', function() {
+    var scope;
+
+    beforeEach(function() {
+      module('easyForms')
+    });
+
+    beforeEach(inject(function(easyForm, $rootScope) {
+      scope = $rootScope.$new();
+      easyForm.extendScope(scope);
+      scope.$initialize('foo', {});
+      scope.form = jasmine.createSpyObj('form', ['$pristine', '$valid']);
+    }));
+
+  })
 });
