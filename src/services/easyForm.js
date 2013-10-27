@@ -21,6 +21,12 @@ angular.module('easyForms').
       errorMessage: 'Form submission error',
     };
 
+    this.overrideDefault = function(param, value) {
+      if (defaultConfig[param] != undefined) {
+        defaultConfig[param] = value;
+      }
+    };
+
     //noinspection JSValidateTypes
     this.$get = ['efUtils', 'Restangular', '$parse', function(efUtils, Restangular, $parse) {
 
