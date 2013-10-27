@@ -71,12 +71,28 @@ angular.module('easyForms').
           }
         },
 
-        $clearMessages: function(scope) {
-          scope.messages.length = 0;
+        hasErrors: function() {
+          return !_.isEmpty(this.errors);
         },
 
-        $clearErrors: function(scope) {
-          scope.errors = {};
+        hasMessages: function() {
+          return this.messages.length > 0;
+        },
+
+        $clearMessages: function() {
+          this.messages.length = 0;
+        },
+
+        $clearErrors: function() {
+          this.errors = {};
+        },
+
+        canSave: function() {
+          return !this.form.$pristine && this.form.$valid;
+        },
+
+        canRevert: function() {
+          return !this.form.$pristine;
         },
 
         reset: function(scope) {

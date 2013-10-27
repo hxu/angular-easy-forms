@@ -12,13 +12,6 @@ angular.module('easyForms').
         scope.editMode = false;
         scope.isCollection = true;
 
-        scope.hasErrors = function() {
-          return !_.isEmpty(scope.errors);
-        };
-        scope.hasMessages = function() {
-          return scope.messages.length > 0;
-        };
-
         scope.form = scope[attrs['name']];
         scope.errors = {};
         scope.messages = []; // Something like "Submission successful"

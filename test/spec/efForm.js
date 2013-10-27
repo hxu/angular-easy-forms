@@ -148,7 +148,7 @@ describe('efForm', function() {
 
   });
 
-  describe('form actions', function () {
+  describe('form state and actions', function () {
     var inputField;
 
     beforeEach(function() {
