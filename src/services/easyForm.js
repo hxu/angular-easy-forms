@@ -46,39 +46,39 @@ angular.module('easyForms').
          */
 
         $initialize: function(scope, resource, attrs) {
-          scope.form = scope[attrs['name']];
-          scope.errors = {};
-          scope.messages = []; // Something like "Submission successful"
-          scope.model = {}; // Data model for the form
-          scope.pristineModel = {};
+          this.form = this[attrs['name']];
+          this.errors = {};
+          this.messages = []; // Something like "Submission successful"
+          this.model = {}; // Data model for the form
+          this.pristineModel = {};
 
           // Variables holding the state of the form
-          scope.editMode = false;
-          scope.isCollection = true;
+          this.editMode = false;
+          this.isCollection = true;
 
 
           if (resource == undefined || !efUtils.isRestangularResource(resource)) {
-            scope.resourceObj = Restangular.all(attrs.efResource);
+            this.resourceObj = Restangular.all(attrs.efResource);
           } else {
             if (efUtils.isRestangularCollection(resource)) {
-              scope.resourceObj = resource;
+              this.resourceObj = resource;
             } else { //noinspection JSValidateTypes
               {
                             // Will a PUT be made on the efResource or the model object?
-                            scope.resourceObj = Restangular.copy(resource);
-                            scope.model = scope.resourceObj;
-                            scope.pristineModel = Restangular.copy(scope.resourceObj); // Need a separate copy to store pristine state
-                            scope.isCollection = false;
-                            scope.editMode = true;
+                            this.resourceObj = Restangular.copy(resource);
+                            this.model = this.resourceObj;
+                            this.pristineModel = Restangular.copy(this.resourceObj); // Need a separate copy to store pristine state
+                            this.isCollection = false;
+                            this.editMode = true;
                           }
             }
           }
           // Merging in the configuration options
-          var parentConfig = $parse(attrs.efConfig)(scope.$parent);
+          var parentConfig = $parse(attrs.efConfig)(this.$parent);
           if (parentConfig != undefined && _.isObject(parentConfig)) {
-            scope.efConfig = angular.extend(defaultConfig, parentConfig);
+            this.efConfig = angular.extend(defaultConfig, parentConfig);
           } else {
-            scope.efConfig = defaultConfig;
+            this.efConfig = defaultConfig;
           }
 
           scope.$on(scope.efConfig.triggerResetSignal, function() {scope.reset(scope)});
@@ -108,35 +108,35 @@ angular.module('easyForms').
           return !this.form.$pristine;
         },
 
-        reset: function(scope) {
-          if (efUtils.isRestangularResource(scope.model)) {
-            scope.model = scope.resourceObj = Restangular.copy(scope.pristineModel);
+        reset: function() {
+          if (efUtils.isRestangularResource(this.model)) {
+            this.model = this.resourceObj = Restangular.copy(this.pristineModel);
           } else {
-            scope.model = angular.copy(scope.pristineModel);
+            this.model = angular.copy(this.pristineModel);
           }
-          scope.$clearMessages(scope);
-          scope.$clearErrors(scope);
-          scope.form.$setPristine();
-          scope.$emit(scope.efConfig.resetSignal);
+          this.$clearMessages();
+          this.$clearErrors();
+          this.form.$setPristine();
+          this.$emit(this.efConfig.resetSignal);
         },
 
-        submit: function(scope) {
+        submit: function() {
           var promise;
 
-          scope.$clearErrors(scope);
+          this.$clearErrors();
 
-          if (scope.editMode) {
-            promise = scope.resourceObj.put();
+          if (this.editMode) {
+            promise = this.resourceObj.put();
           } else {
-            promise = scope.resourceObj.post(scope.model);
+            promise = this.resourceObj.post(this.model);
           }
-          scope.$emit(scope.efConfig.submitSignal);
-          scope.responseHandler(promise);
+          this.$emit(this.efConfig.submitSignal);
+          this.responseHandler(promise);
         },
 
-        successHandler: function(scope) {
-          scope.messages.push(scope.efConfig.successMessage);
-          scope.$emit(scope.efConfig.successSignal);
+        successHandler: function() {
+          this.messages.push(this.efConfig.successMessage);
+          this.$emit(this.efConfig.successSignal);
         },
 
         errorHandler: function(scope, resp) {
@@ -158,15 +158,12 @@ angular.module('easyForms').
       };
 
       svc.extendScope = function(scope) {
-
-
         angular.forEach(svc, function(func, name) {
           if (name == 'extendScope') {
             return;
           }
           scope[name] = _.bind(func, scope, scope);
         });
-
       };
 
       return svc;
