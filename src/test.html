@@ -59,6 +59,7 @@
     <!-- build:js({.tmp,app}) scripts/scripts.js -->
     <script src="module.js"></script>
     <script src="services/efUtils.js"></script>
+    <script src="services/easyForm.js"></script>
     <script src="directives/efForm.js"></script>
     <script src="directives/efInput.js"></script>
     <script src="directives/efButtons.js"></script>
@@ -117,6 +118,7 @@
             scope: {
             },
             link: function(scope, elem, attrs, ctrl) {
+              console.log(ctrl);
               scope.$watch(function(scope) {return scope.$eval(attrs.testAttr)}, function(newVal) {
                 console.log(newVal);
               });

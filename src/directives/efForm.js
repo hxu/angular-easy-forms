@@ -25,18 +25,6 @@ angular.module('easyForms').
         scope.model = {}; // Data model for the form
         scope.pristineModel = {};
 
-        // Config variables
-        var defaultConfig = {
-          triggerResetSignal: 'efTriggerFormReset',
-          triggerReinitializeSignal: 'efReinitialize',
-          resetSignal: 'efFormReset',
-          submitSignal: 'efFormSubmit',
-          successSignal: 'efFormSubmitSuccess',
-          errorSignal: 'efFormSubmitError',
-          successMessage: 'Form submission success',
-          errorMessage: 'Form submission error',
-        };
-
         // Configure the form style
         scope.formStyle = attrs.efStyle || 'basic';
         var formStyleClass = {
@@ -51,9 +39,9 @@ angular.module('easyForms').
 
         easyForm.extendScope(scope);
 
-        scope.$initialize(scope.efResource, attrs, defaultConfig);
+        scope.$initialize(scope.efResource, attrs);
         scope.$watch('efResource', function(newVal) {
-          scope.$initialize(newVal, attrs, defaultConfig);
+          scope.$initialize(newVal, attrs);
         });
 
         scope.$on(scope.efConfig.triggerResetSignal, function() {scope.reset(scope)});
