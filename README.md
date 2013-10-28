@@ -1,7 +1,9 @@
-angular-easy-forms
+Angular EasyForms
 ==================
 
 [AngularJS](http://angularjs.org/) directives for basic client-side form handling
+
+[![Build Status](https://travis-ci.org/hxu/angular-easy-forms.png?branch=master)](https://travis-ci.org/hxu/angular-easy-forms)
 
 Overview
 ========
@@ -20,7 +22,7 @@ See some examples here.
 Dependencies
 ============
 
-EasyForms uses the following libraries
+EasyForms uses the following libraries:
 
   - [AngularJS](http://angularjs.org/)
   - [Restangular](https://github.com/mgonto/restangular)
