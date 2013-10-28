@@ -1,0 +1,145 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Easy Forms test</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <link href="bower_components/sass-bootstrap/dist/css/bootstrap.css" rel="stylesheet" media="screen">
+</head>
+  <body ng-app="easyForms">
+    <!--[if lt IE 7]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+
+    <!--[if lt IE 9]>
+      <script src="bower_components/es5-shim/es5-shim.js"></script>
+      <script src="bower_components/json3/lib/json3.min.js"></script>
+    <![endif]-->
+
+    <!-- Add your site or application content here -->
+    <div class="container" ng-controller="testCtrl">
+
+      <form name="testForm" ef-form="" ef-resource="test">
+        <div ef-messages=""></div>
+
+        <input type="text" name="testField" ng-model="model.testField">
+        route: {{ efResource.route }}
+
+        <input type="text" name="testField2" ef-input="" ef-label="MyLabel" class="bar baz">
+
+        <pre>
+          {{ model }}
+        </pre>
+
+        <div ef-submit=""></div>
+        <div ef-reset=""></div>
+      </form>
+
+      <div test-dir="" test-attr="test">blaraargh</div>
+
+      <div test-comp="" class="bar"></div>
+
+    </div>
+
+    <script src="bower_components/jquery/jquery.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/lodash/lodash.js"></script>
+    <script src="bower_components/restangular/dist/restangular.js"></script>
+
+    <!-- build:js scripts/modules.js -->
+    <script src="bower_components/angular-resource/angular-resource.js"></script>
+    <script src="bower_components/angular-cookies/angular-cookies.js"></script>
+    <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+
+    <script src="scripts/scripts.js"></script>
+
+    <script type="application/javascript">
+
+      angular.module('easyForms').
+        controller('testCtrl', function($scope, Restangular, $timeout) {
+          $scope.test = 'foo';
+        });
+
+      angular.module('easyForms').
+        directive('testInput', function() {
+          return {
+//            compile: function(elem, attrs) {
+//              var modelName = 'model.' + attrs.name;
+//              var elemStr = '<input type="text" ng-model="' + modelName +'"></input>';
+//              elem.replaceWith(elemStr);
+//              };
+            replace: true,
+//            template: '<input ng-model="model.foo">'
+            template: function(elem, attrs) {
+              var newElem = '<input ng-model="model.' + attrs.name + '">';
+//              angular.forEach(attrs.$attr, function(tagName, attrKey) {
+//                var attrVal = attrs[attrKey];
+//                if (attrKey == 'testInput') {
+//                  return;
+//                }
+//                if (attrVal == "") {
+//                  newElem += ' ' + tagName;
+//                } else {
+//                  newElem += ' ' + tagName + '=' + attrs[attrKey];
+//                }
+//              });
+//              newElem += '>';
+              return newElem;
+            }
+//            priority: 100,
+//            template: function(elem, attrs) {
+//              var elemStr = '<input>';
+//              console.log(elem.html());
+//              console.log(attrs);
+//              attrs.$set('ngModel', 'model.' + attrs.name);
+//              elemStr += elem.html() + '</div>';
+//              return elemStr;
+//            }
+
+          };
+        });
+
+      angular.module('easyForms').
+        directive('testDir', function() {
+          return {
+            scope: {
+            },
+            link: function(scope, elem, attrs, ctrl) {
+              console.log(ctrl);
+              scope.$watch(function(scope) {return scope.$eval(attrs.testAttr)}, function(newVal) {
+                console.log(newVal);
+              });
+            }
+          }
+        });
+
+      angular.module('easyForms').
+        directive('testComp', function() {
+          return {
+//            compile: function(elem, attrs, ctrl) {
+//              var elemStr = '<div'
+//              console.log(attrs);
+//              angular.forEach(attrs.$attr, function(attrTag, attrKey) {
+//                var attrVal = attrs[attrKey];
+//                if (attrVal == "") {
+//                  elemStr += ' ' + attrTag;
+//                } else {
+//                  elemStr += ' ' + attrTag + '=' + attrs[attrKey];
+//                }
+//              });
+//              elemStr +=  '>foo</div>';
+//              elem.replaceWith(elemStr);
+//            }
+            template: '<div>foo</div>'
+          };
+        });
+    </script>
+
+
+  </body>
+</html>
