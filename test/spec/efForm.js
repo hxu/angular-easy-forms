@@ -186,6 +186,10 @@ describe('efForm', function() {
       expect(formScope.errors).toEqual({});
     });
 
+    it('$getControls returns an array of the controls', function() {
+      expect(true).toBeFalsy();
+    });
+
     it('reset should set the form back to pristine', function () {
       inputField.$setViewValue('bar');
       expect(formScope.form.$pristine).toBeFalsy();
@@ -201,6 +205,8 @@ describe('efForm', function() {
       // For example, if the input is email type, the model doesn't get updated until
       // There is an @ in the input and the domain is valid.  So even if we reset the model object,
       // The control won't reflect it
+
+      // See this issue on AngularJs https://github.com/angular/angular.js/issues/1412
       elem = angular.element(
         '<form name="testForm" ef-form ef-resource="foo">' +
           '<input type="email" name="testInput" ef-input></input>' +
@@ -217,7 +223,7 @@ describe('efForm', function() {
 
       formScope.reset();
       formScope.$apply();
-      expect(inputField.$viewValue).toBeNaN();
+      expect(inputField.$viewValue).not.toBeDefined();
       expect(inputField.$valid).toBeTruthy();
       expect(inputField.$pristine).toBeTruthy();
     });

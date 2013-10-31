@@ -125,6 +125,16 @@ angular.module('easyForms').
           } else {
             this.model = angular.copy(this.pristineModel);
           }
+
+          var mdl = this.model;
+
+          // reset the view value of each control, in case its invalid
+          var ctrls = this.$getControls();
+          angular.forEach(ctrls, function(ctrl) {
+            var newValue;
+            newValue = mdl[ctrl.$name];
+            ctrl.$setViewValue(newValue);
+          });
           this.$clearMessages();
           this.$clearErrors();
           this.form.$setPristine();
@@ -164,6 +174,18 @@ angular.module('easyForms').
 
         responseHandler: function(scope, promise) {
           promise.then(scope.successHandler, scope.errorHandler);
+        },
+
+        $getControls: function() {
+          var ctrls = [];
+          angular.forEach(this.form, function(val, key) {
+            if (key[0] != '$') {
+              if (val.hasOwnProperty('$viewValue')) {
+                ctrls.push(val);
+              }
+            }
+          });
+          return ctrls;
         }
 
       };

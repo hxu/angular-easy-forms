@@ -37,7 +37,6 @@ project.
 Usage
 =====
 
-See the [full documentation]() for full details.
 
 Contributing
 ============
