@@ -13,16 +13,21 @@ angular.module('easyForms').
     return {
       replace: true,
       template: function(elem, attrs) {
-        var newElem =
-          '<div class="form-group">' +
-            '<label>' + attrs.efLabel + '</label>';
+        // Only use the template function to attach ng-model
+        // Other classes are attached in the compile function
+        var newElem = '<div class="form-group">';
+
+        if (attrs.efLabel) {
+          newElem += '<label>' + attrs.efLabel + '</label>';
+        }
 
         if (attrs.ngModel != undefined) {
           newElem += '<input ng-model="' + attrs.ngModel + '">';
         } else {
           newElem += '<input ng-model="model.' + attrs.name + '">';
         }
-          newElem += '</div>';
+
+        newElem += '</div>';
         return newElem;
       },
       compile: function(elem, attrs) {

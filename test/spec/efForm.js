@@ -187,7 +187,8 @@ describe('efForm', function() {
     });
 
     it('$getControls returns an array of the controls', function() {
-      expect(true).toBeFalsy();
+      var res = [inputField];
+      expect(formScope.$getControls()).toEqual(res);
     });
 
     it('reset should set the form back to pristine', function () {
@@ -288,12 +289,14 @@ describe('efForm', function() {
 
     it('submit should emit efSubmit signal', function () {
       spyOn(formScope, '$emit');
+      inputField.$setViewValue('foo');
       formScope.submit();
       expect(formScope.$emit).toHaveBeenCalledWith('efFormSubmit');
     });
 
     it('submit should call $clearErrors', function () {
       spyOn(formScope, '$clearErrors');
+      inputField.$setViewValue('foo');
       formScope.submit();
       expect(formScope.$clearErrors).toHaveBeenCalled();
     });
@@ -310,6 +313,7 @@ describe('efForm', function() {
     it('submit on a collection or new object should POST to the resource', function () {
       spyOn(formScope.resourceObj, 'post');
       spyOn(formScope, 'responseHandler'); // Stub out the response handler
+      inputField.$setViewValue('foo');
       formScope.submit();
       expect(formScope.resourceObj.post).toHaveBeenCalledWith(formScope.model);
     });
@@ -328,6 +332,7 @@ describe('efForm', function() {
 
       spyOn(formScope.resourceObj, 'put');
       spyOn(formScope, 'responseHandler'); // Stub out the response handler
+      inputField.$setViewValue('foo');
       formScope.submit();
       expect(formScope.resourceObj.put).toHaveBeenCalled();
     });
@@ -340,6 +345,7 @@ describe('efForm', function() {
 
       it('should pass the response to responseHandler', function () {
         spyOn(formScope, 'responseHandler');
+        inputField.$setViewValue('foo');
         formScope.submit();
         expect(formScope.responseHandler).toHaveBeenCalled();
       });
@@ -354,8 +360,9 @@ describe('efForm', function() {
       });
 
       it('submit without error should emit efSubmitSuccess signal', function () {
-        $httpBackend.expect('POST', '/foo', {}).respond(201);
+        $httpBackend.expect('POST', '/foo', {test: 'foo'}).respond(201);
         spyOn(formScope, '$emit');
+        inputField.$setViewValue('foo');
         formScope.submit();
         $httpBackend.flush();
         expect(formScope.$emit).toHaveBeenCalledWith('efFormSubmitSuccess');
@@ -363,8 +370,9 @@ describe('efForm', function() {
 
       it('submit with error should call the errorHandler', function () {
         var errorResp = {error: 'error!'};
-        $httpBackend.expect('POST', '/foo', {}).respond(400, errorResp);
+        $httpBackend.expect('POST', '/foo', {test: 'foo'}).respond(400, errorResp);
         spyOn(formScope, 'errorHandler');
+        inputField.$setViewValue('foo');
         formScope.submit();
         $httpBackend.flush();
         expect(formScope.errorHandler).toHaveBeenCalled();
@@ -372,22 +380,25 @@ describe('efForm', function() {
 
       it('submit with error should set form to error state', function () {
         expect(formScope.hasErrors()).toBeFalsy();
-        $httpBackend.expect('POST', '/foo', {}).respond(400, {error: 'error!'});
+        $httpBackend.expect('POST', '/foo', {test: 'foo'}).respond(400, {error: 'error!'});
+        inputField.$setViewValue('foo');
         formScope.submit();
         $httpBackend.flush();
         expect(formScope.hasErrors()).toBeTruthy();
       });
 
       it('submit with error should populate the error hash', function () {
-        $httpBackend.expect('POST', '/foo', {}).respond(400, {test: 'must be filled out'});
+        $httpBackend.expect('POST', '/foo', {test: 'foo'}).respond(400, {test: 'must be filled out'});
+        inputField.$setViewValue('foo');
         formScope.submit();
         $httpBackend.flush();
         expect(formScope.errors.test).toEqual(['must be filled out']);
       });
 
       it('submit with error should emit efSubmitError signal', function () {
-        $httpBackend.expect('POST', '/foo', {}).respond(400);
+        $httpBackend.expect('POST', '/foo', {test: 'foo'}).respond(400);
         spyOn(formScope, '$emit');
+        inputField.$setViewValue('foo');
         formScope.submit();
         $httpBackend.flush();
         expect(formScope.$emit).toHaveBeenCalledWith('efFormSubmitError');

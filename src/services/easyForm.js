@@ -144,6 +144,10 @@ angular.module('easyForms').
         submit: function() {
           var promise;
 
+          if (!this.canSubmit()) {
+            return false;
+          }
+
           this.$clearErrors();
 
           if (this.editMode) {

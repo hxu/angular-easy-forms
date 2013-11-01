@@ -57,7 +57,7 @@ describe('efInput', function() {
   it('should infer name if only id is provided', function () {
     elem = angular.element(
       '<form name="testForm" ef-form ef-resource="foo">' +
-        '<input type="text" ef-input id="fooField"></input>' +
+        '<input type="text" ef-input id="fooField" ef-label="foo label"></input>' +
         '</form>'
     );
     scope = $rootScope.$new();
@@ -71,7 +71,7 @@ describe('efInput', function() {
   it('should infer id if only name is provided', function () {
     elem = angular.element(
       '<form name="testForm" ef-form ef-resource="foo">' +
-        '<input type="text" ef-input name="fooField"></input>' +
+        '<input type="text" ef-input name="fooField" ef-label="foo label"></input>' +
         '</form>'
     );
     scope = $rootScope.$new();
