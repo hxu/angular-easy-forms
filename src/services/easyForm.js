@@ -14,7 +14,6 @@ angular.module('easyForms').
 
     var defaultConfig = {
       triggerResetSignal: 'efTriggerFormReset',
-      triggerReinitializeSignal: 'efReinitialize',
       resetSignal: 'efFormReset',
       submitSignal: 'efFormSubmit',
       successSignal: 'efFormSubmitSuccess',
