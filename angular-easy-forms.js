@@ -1,6 +1,6 @@
 /**
  * AngularEasyForms - Basic CRUD operation handling in a box
- * @version v0.1.0 - 2013-10-27
+ * @version v0.1.0 - 2013-11-07
  * @link http://github.com/hxu/angular-easy-forms
  * @author Han Xu
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -74,26 +74,32 @@ angular.module('easyForms').
 
 angular.module('easyForms').
 
-  /*
+  /**
    * @ngdoc directive
    * @name easyForms.efInput
    *
    * @description use as an attribute on an input tag.
    */
+
   directive('efInput', function() {
     return {
       replace: true,
       template: function(elem, attrs) {
-        var newElem =
-          '<div class="form-group">' +
-            '<label>' + attrs.efLabel + '</label>';
+        // Only use the template function to attach ng-model
+        // Other classes are attached in the compile function
+        var newElem = '<div class="form-group">';
+
+        if (attrs.efLabel) {
+          newElem += '<label>' + attrs.efLabel + '</label>';
+        }
 
         if (attrs.ngModel != undefined) {
           newElem += '<input ng-model="' + attrs.ngModel + '">';
         } else {
           newElem += '<input ng-model="model.' + attrs.name + '">';
         }
-          newElem += '</div>';
+
+        newElem += '</div>';
         return newElem;
       },
       compile: function(elem, attrs) {
@@ -121,6 +127,8 @@ angular.module('easyForms').
         // Transfer classes to the input
         var getClasses = function(classStr) {
           var classArray = classStr.split(' ');
+          // ensure the input has class 'form-control'
+          classArray.push('form-control');
           // remove empty strings
           classArray = _.compact(classArray);
           // remove duplicates
@@ -157,8 +165,10 @@ angular.module('easyForms').
   });
 'use strict';
 
-/*
+/**
  * @ngdoc service
+ * @name easyForms.easyForm
+ *
  * @description This service encapsulates all of the functions used by the easyForm directives.
  * These have been broken out into this service instead of being put into the directive directly so that users don't
  * have to use the directive in order to use some of the functions
@@ -169,7 +179,6 @@ angular.module('easyForms').
 
     var defaultConfig = {
       triggerResetSignal: 'efTriggerFormReset',
-      triggerReinitializeSignal: 'efReinitialize',
       resetSignal: 'efFormReset',
       submitSignal: 'efFormSubmit',
       successSignal: 'efFormSubmitSuccess',
@@ -189,15 +198,14 @@ angular.module('easyForms').
 
       var svc = {
 
-        /*
+        /**
          * @doc function
          * @name easyForms.efForm:$initialize
          *
-         * @description Initializes the form by:
-         *  - resolving the resource attribute to a resource object
-         *  - if a configuration object is provided, merging it into the form's configuration
+         * @description Initializes the form by: a) resolving the resource attribute to a resource object, b) if a configuration object
+         * is provided, merging it into the form's configuration
          *
-         * @param {Restangular resource} The resource to bind the form to.  If this is null, the form will create a new
+         * @param {Restangular resource} resource The resource to bind the form to.  If this is null, the form will create a new
          * Restangular object with the string value of the efResource attribute on the directive
          *
          */
@@ -237,6 +245,16 @@ angular.module('easyForms').
           } else {
             this.efConfig = defaultConfig;
           }
+          // Also a few special configuration attributes
+          var attrToConfigMap = {
+            efSuccessMessage: 'successMessage',
+            efErrorMessage: 'errorMessage',
+          };
+          angular.forEach(attrToConfigMap, function(confKey, attrKey) {
+            if (attrs[attrKey]) {
+              scope.efConfig[confKey] = attrs[attrKey];
+            }
+          });
 
           scope.$on(scope.efConfig.triggerResetSignal, function() {scope.reset(scope)});
         },
@@ -257,11 +275,11 @@ angular.module('easyForms').
           this.errors = {};
         },
 
-        canSave: function() {
+        canSubmit: function() {
           return !this.form.$pristine && this.form.$valid;
         },
 
-        canRevert: function() {
+        canReset: function() {
           return !this.form.$pristine;
         },
 
@@ -271,6 +289,16 @@ angular.module('easyForms').
           } else {
             this.model = angular.copy(this.pristineModel);
           }
+
+          var mdl = this.model;
+
+          // reset the view value of each control, in case its invalid
+          var ctrls = this.$getControls();
+          angular.forEach(ctrls, function(ctrl) {
+            var newValue;
+            newValue = mdl[ctrl.$name];
+            ctrl.$setViewValue(newValue);
+          });
           this.$clearMessages();
           this.$clearErrors();
           this.form.$setPristine();
@@ -279,6 +307,10 @@ angular.module('easyForms').
 
         submit: function() {
           var promise;
+
+          if (!this.canSubmit()) {
+            return false;
+          }
 
           this.$clearErrors();
 
@@ -310,6 +342,18 @@ angular.module('easyForms').
 
         responseHandler: function(scope, promise) {
           promise.then(scope.successHandler, scope.errorHandler);
+        },
+
+        $getControls: function() {
+          var ctrls = [];
+          angular.forEach(this.form, function(val, key) {
+            if (key[0] != '$') {
+              if (val.hasOwnProperty('$viewValue')) {
+                ctrls.push(val);
+              }
+            }
+          });
+          return ctrls;
         }
 
       };

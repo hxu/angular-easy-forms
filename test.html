@@ -24,13 +24,15 @@
     <!-- Add your site or application content here -->
     <div class="container" ng-controller="testCtrl">
 
-      <form name="testForm" ef-form="" ef-resource="test">
+      <form name="testForm" ef-form="" ef-resource="www.google.com">
         <div ef-messages=""></div>
 
         <input type="text" name="testField" ng-model="model.testField">
         route: {{ efResource.route }}
 
         <input type="text" name="testField2" ef-input="" ef-label="MyLabel" class="bar baz">
+
+        <input type="email" name="testEmail" ef-input="" ef-label="Email">
 
         <pre>
           {{ model }}
@@ -39,10 +41,6 @@
         <div ef-submit=""></div>
         <div ef-reset=""></div>
       </form>
-
-      <div test-dir="" test-attr="test">blaraargh</div>
-
-      <div test-comp="" class="bar"></div>
 
     </div>
 
@@ -63,6 +61,10 @@
       angular.module('easyForms').
         controller('testCtrl', function($scope, Restangular, $timeout) {
           $scope.test = 'foo';
+          var foo = Restangular.all('http://www.google.com');
+          console.log(foo);
+          console.log(foo.route);
+          foo.getList();
         });
 
       angular.module('easyForms').
@@ -138,6 +140,7 @@
             template: '<div>foo</div>'
           };
         });
+
     </script>
 
 
