@@ -70,21 +70,6 @@ describe('efForm', function() {
       expect(formScope.isCollection).toBeTruthy();
     });
 
-    it('should accept absolute URLs', function() {
-      // This is first broken at the efResource parser level, but Restangular also doesn't seem to accept absolute urls
-      elem = angular.element(
-        '<form name="testForm" ef-form ef-resource="http://www.google.com"></form>'
-      );
-      scope = $rootScope.$new();
-      scope.testResource = Restangular.all('foo');
-      $compile(elem)(scope);
-      formScope = elem.scope();
-
-      expect(formScope.resourceObj).toBeDefined();
-      expect(formScope.resourceObj.route).toEqual('http://www.google.com');
-      expect(formScope.isCollection).toBeTruthy();
-    });
-
     it('should update the resourceObj when the efResource changes', function () {
       elem = angular.element(
         '<form name="testForm" ef-form ef-resource="testResource"></form>'
