@@ -95,6 +95,13 @@ describe('easyForm service', function() {
       scope.errors = {email: 'required'};
       expect(scope.hasErrors()).toBeTruthy();
     });
+
+    it('hasFieldError should be true if a field has an error', function() {
+      scope.errors = {foo: 'bar'};
+      expect(scope.hasFieldError("baz")).toBeFalsy();
+      scope.errors = {baz: ['blah']};
+      expect(scope.hasFieldError("baz")).toBeTruthy();
+    });
   });
 
   describe('form actions', function() {

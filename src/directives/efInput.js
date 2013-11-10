@@ -15,7 +15,7 @@ angular.module('easyForms').
       template: function(elem, attrs) {
         // Only use the template function to attach ng-model
         // Other classes are attached in the compile function
-        var newElem = '<div class="form-group">';
+        var newElem = '<div class="form-group" ng-class="{\'has-error\': hasFieldError(\'' + attrs.name + '\')}">';
 
         if (attrs.efLabel) {
           newElem += '<label>' + attrs.efLabel + '</label>';
@@ -26,6 +26,9 @@ angular.module('easyForms').
         } else {
           newElem += '<input ng-model="model.' + attrs.name + '">';
         }
+        newElem += '<p class="help-block" ng-show="hasFieldError(\'' + attrs.name + '\')">' +
+          '{{ errors.' + attrs.name + '}}' +
+          '</p>';
 
         newElem += '</div>';
         return newElem;
@@ -51,6 +54,7 @@ angular.module('easyForms').
 
         // Add for the to the label
         labelElem.attr('for', inputElem.attr('id'));
+        labelElem.addClass('control-label');
 
         // Transfer classes to the input
         var getClasses = function(classStr) {

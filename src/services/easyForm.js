@@ -98,6 +98,12 @@ angular.module('easyForms').
           return !_.isEmpty(this.errors);
         },
 
+        hasFieldError: function(scope, field) {
+          // need scope has first argument because of binding behavior -- fix later
+          var err = this.errors[field];
+          return !_.isUndefined(err) && !_.isEmpty(err);
+        },
+
         hasMessages: function() {
           return this.messages.length > 0;
         },
