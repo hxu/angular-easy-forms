@@ -1,6 +1,6 @@
 /**
  * AngularEasyForms - Basic CRUD operation handling in a box
- * @version v0.1.0 - 2013-11-07
+ * @version v0.1.0 - 2013-11-10
  * @link http://github.com/hxu/angular-easy-forms
  * @author Han Xu
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -87,7 +87,7 @@ angular.module('easyForms').
       template: function(elem, attrs) {
         // Only use the template function to attach ng-model
         // Other classes are attached in the compile function
-        var newElem = '<div class="form-group">';
+        var newElem = '<div class="form-group" ng-class="{\'has-error\': hasFieldError(\'' + attrs.name + '\')}">';
 
         if (attrs.efLabel) {
           newElem += '<label>' + attrs.efLabel + '</label>';
@@ -98,6 +98,9 @@ angular.module('easyForms').
         } else {
           newElem += '<input ng-model="model.' + attrs.name + '">';
         }
+        newElem += '<p class="help-block" ng-show="hasFieldError(\'' + attrs.name + '\')">' +
+          '{{ getFieldError(\'' + attrs.name + '\') }}' +
+          '</p>';
 
         newElem += '</div>';
         return newElem;
@@ -123,6 +126,7 @@ angular.module('easyForms').
 
         // Add for the to the label
         labelElem.attr('for', inputElem.attr('id'));
+        labelElem.addClass('control-label');
 
         // Transfer classes to the input
         var getClasses = function(classStr) {
@@ -263,8 +267,24 @@ angular.module('easyForms').
           return !_.isEmpty(this.errors);
         },
 
+        hasFieldError: function(scope, field) {
+          // need scope has first argument because of binding behavior -- fix later
+          var err = this.errors[field];
+          return !_.isUndefined(err) && !_.isEmpty(err);
+        },
+
         hasMessages: function() {
           return this.messages.length > 0;
+        },
+
+        getFieldError: function(scope, field) {
+          // For handling error hash values that can be a string or an array
+          var err = this.errors[field];
+          if (_.isArray(err)) {
+            return err.join(' ');
+          } else {
+            return err
+          }
         },
 
         $clearMessages: function() {
