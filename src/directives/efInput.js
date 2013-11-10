@@ -27,7 +27,7 @@ angular.module('easyForms').
           newElem += '<input ng-model="model.' + attrs.name + '">';
         }
         newElem += '<p class="help-block" ng-show="hasFieldError(\'' + attrs.name + '\')">' +
-          '{{ errors.' + attrs.name + '}}' +
+          '{{ getFieldError(\'' + attrs.name + '\') }}' +
           '</p>';
 
         newElem += '</div>';

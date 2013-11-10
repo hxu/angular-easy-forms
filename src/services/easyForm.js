@@ -108,6 +108,16 @@ angular.module('easyForms').
           return this.messages.length > 0;
         },
 
+        getFieldError: function(scope, field) {
+          // For handling error hash values that can be a string or an array
+          var err = this.errors[field];
+          if (_.isArray(err)) {
+            return err.join(' ');
+          } else {
+            return err
+          }
+        },
+
         $clearMessages: function() {
           this.messages.length = 0;
         },

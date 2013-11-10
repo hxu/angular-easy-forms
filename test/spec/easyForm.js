@@ -102,6 +102,14 @@ describe('easyForm service', function() {
       scope.errors = {baz: ['blah']};
       expect(scope.hasFieldError("baz")).toBeTruthy();
     });
+
+    it('getFieldError should handle strings and arrays', function() {
+      scope.errors = {foo: 'bar'};
+      expect(scope.getFieldError('foo')).toEqual('bar');
+      scope.errors = {foo: ['bar', 'baz']};
+      expect(scope.getFieldError('foo')).toEqual('bar baz');
+
+    });
   });
 
   describe('form actions', function() {
