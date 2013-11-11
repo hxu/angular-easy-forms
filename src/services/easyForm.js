@@ -64,13 +64,13 @@ angular.module('easyForms').
               this.resourceObj = resource;
             } else { //noinspection JSValidateTypes
               {
-                            // Will a PUT be made on the efResource or the model object?
-                            this.resourceObj = Restangular.copy(resource);
-                            this.model = this.resourceObj;
-                            this.pristineModel = Restangular.copy(this.resourceObj); // Need a separate copy to store pristine state
-                            this.isCollection = false;
-                            this.editMode = true;
-                          }
+                // Will a PUT be made on the efResource or the model object?
+                this.resourceObj = Restangular.copy(resource);
+                this.model = this.resourceObj;
+                this.pristineModel = Restangular.copy(this.resourceObj); // Need a separate copy to store pristine state
+                this.isCollection = false;
+                this.editMode = true;
+              }
             }
           }
           // Merging in the configuration options
@@ -83,6 +83,7 @@ angular.module('easyForms').
           // Also a few special configuration attributes
           var attrToConfigMap = {
             efSuccessMessage: 'successMessage',
+            efSuccessSignal: 'successSignal',
             efErrorMessage: 'errorMessage',
           };
           angular.forEach(attrToConfigMap, function(confKey, attrKey) {
@@ -175,12 +176,12 @@ angular.module('easyForms').
         },
 
         successHandler: function() {
-          this.messages.push(this.efConfig.successMessage);
+          this.messages.push({text: this.efConfig.successMessage, class: 'success'});
           this.$emit(this.efConfig.successSignal);
         },
 
         errorHandler: function(scope, resp) {
-          scope.messages.push(scope.efConfig.errorMessage);
+          scope.messages.push({text: scope.efConfig.errorMessage, class: 'error'});
           angular.forEach(resp.data, function(errormsg, field) {
             if (angular.isArray(errormsg)) {
               scope.errors[field] = errormsg;
@@ -206,7 +207,6 @@ angular.module('easyForms').
           });
           return ctrls;
         }
-
       };
 
       svc.extendScope = function(scope) {
