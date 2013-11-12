@@ -81,6 +81,7 @@ angular.module('easyForms').
             this.efConfig = defaultConfig;
           }
           // Also a few special configuration attributes
+          // Keys are the attribute, values are the key in efConfig
           var attrToConfigMap = {
             efSuccessMessage: 'successMessage',
             efSuccessSignal: 'successSignal',
