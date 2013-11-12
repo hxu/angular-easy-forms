@@ -182,7 +182,7 @@ angular.module('easyForms').
         },
 
         errorHandler: function(scope, resp) {
-          scope.messages.push({text: scope.efConfig.errorMessage, class: 'error'});
+          scope.messages.push({text: scope.efConfig.errorMessage, class: 'danger'});
           angular.forEach(resp.data, function(errormsg, field) {
             if (angular.isArray(errormsg)) {
               scope.errors[field] = errormsg;
