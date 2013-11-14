@@ -92,6 +92,17 @@ describe('efForm', function() {
     it('should not be in edit mode', function () {
       expect(formScope.editMode).toBeFalsy();
     });
+
+    it('should accept preset model values', function() {
+      elem = angular.element(
+        '<form name="testForm" ef-form ef-resource="foo" ef-model-preset="presets"></form>'
+      );
+      scope = $rootScope.$new();
+      scope.presets = {foo: 'bar'};
+      $compile(elem)(scope);
+      formScope = elem.scope();
+      expect(formScope.model).toEqual({foo: 'bar'});
+    })
   });
 
   describe('initialize in edit mode', function() {

@@ -479,8 +479,15 @@ angular.module('easyForms').
           this.form = this[attrs['name']];
           this.errors = {};
           this.messages = []; // Something like "Submission successful"
-          this.model = {}; // Data model for the form
-          this.pristineModel = {};
+
+          if (attrs.efModelPreset) {
+            var presets = $parse(attrs.efModelPreset)(this.$parent);
+            this.model = angular.copy(presets);
+            this.pristineModel = angular.copy(presets);
+          } else {
+            this.model = {}; // Data model for the form
+            this.pristineModel = {};
+          }
 
           // Variables holding the state of the form
           this.editMode = false;
@@ -493,14 +500,12 @@ angular.module('easyForms').
             if (efUtils.isRestangularCollection(resource)) {
               this.resourceObj = resource;
             } else { //noinspection JSValidateTypes
-              {
-                // Will a PUT be made on the efResource or the model object?
-                this.resourceObj = Restangular.copy(resource);
-                this.model = this.resourceObj;
-                this.pristineModel = Restangular.copy(this.resourceObj); // Need a separate copy to store pristine state
-                this.isCollection = false;
-                this.editMode = true;
-              }
+              // Will a PUT be made on the efResource or the model object?
+              this.resourceObj = Restangular.copy(resource);
+              this.model = this.resourceObj;
+              this.pristineModel = Restangular.copy(this.resourceObj); // Need a separate copy to store pristine state
+              this.isCollection = false;
+              this.editMode = true;
             }
           }
           // Merging in the configuration options
