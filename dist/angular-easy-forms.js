@@ -266,7 +266,7 @@ angular.module('easyForms').
    * @description use as an attribute on a select tag tag.
    */
 
-  directive('efSelect', function() {
+  directive('efTextarea', function() {
     return {
       replace: true,
       template: function(elem, attrs) {
