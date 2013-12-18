@@ -117,4 +117,21 @@ describe('efInput', function() {
     expect(inputElem.attr('ng-model')).toEqual('model.otherField');
   });
 
+  it('should move attributes to the input and remove them from the containing div', function() {
+    elem = angular.element(
+      '<form name="testForm" ef-form ef-resource="foo">' +
+        '<input type="text" name="testInput" ef-input ef-label="Label" class="bar" placeholder="fooPlaceholder" some-attribute></input>' +
+        '</form>'
+    );
+
+    scope = $rootScope.$new();
+    $compile(elem)(scope);
+    formScope = elem.scope();
+    inputField = formScope.form.testInput;
+    var inputElem = elem.find('input');
+    var containingDiv = elem.find('div');
+    expect(inputElem.attr('some-attribute')).toBeDefined();
+    expect(containingDiv.attr('some-attribute')).not.toBeDefined();
+  })
+
 });

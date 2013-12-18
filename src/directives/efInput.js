@@ -80,6 +80,10 @@ angular.module('easyForms').
             var tagVal = attrs[attr];
             inputElem.attr(tag, tagVal);
           }
+          var keepOnContainingDiv = ['class', 'ng-class'];
+          if (keepOnContainingDiv.indexOf(tag) == -1) {
+            elem.removeAttr(tag);
+          }
         });
       }
     };
